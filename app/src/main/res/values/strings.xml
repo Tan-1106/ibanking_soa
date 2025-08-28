@@ -1,3 +1,12 @@
 <resources>
-    <string name="app_name">ibanking_soa</string>
+    <string name="app_name">iBanking_soa</string>
+
+    <!-- LoginScreen -->
+    <string name="LoginScreen_Welcome">Welcome back!</string>
+    <string name="LoginScreen_Text">Sign in to manage your money, anytime, anywhere.</string>
+    <string name="LoginScreen_UsernameLabel">Your username</string>
+    <string name="LoginScreen_PasswordLabel">Your password</string>
+    <string name="LoginScreen_RememberPassword">Remember password</string>
+    <string name="LoginScreen_ButtonText">Login</string>
+
 </resources>
