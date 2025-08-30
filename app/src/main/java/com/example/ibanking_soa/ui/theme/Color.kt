@@ -19,5 +19,6 @@ val PrimaryColor = Color(0xFF00C8C8)
 val SecondaryColor = Color(0xFF008C8C)
 val ThirdColor = Color(0xFF005C5C)
 
+val AcceptColor  = Color(0xFF26C485)
+val WarningColor = Color(0xFFEEA243)
 val AlertColor = Color(0xFFE15554)
-

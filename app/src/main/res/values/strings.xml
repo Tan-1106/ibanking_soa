@@ -9,4 +9,28 @@
     <string name="LoginScreen_RememberPassword">Remember password</string>
     <string name="LoginScreen_ButtonText">Login</string>
 
+    <!-- TuitionFeeScreen -->
+    <string name="TuitionFee">Tuition Fee</string>
+    <string name="TuitionFee_StudentID">Student ID:</string>
+    <string name="TuitionFee_IDPlaceHolder">Example: 522000…</string>
+    <string name="TuitionFee_TuitionInformation">Tuition Information:</string>
+    <string name="TuitionFee_StudentName">Student name</string>
+    <string name="TuitionFee_Amount">Amount</string>
+    <string name="TuitionFee_Content">Content</string>
+    <string name="TuitionFee_Balance">Balance:</string>
+    <string name="TuitionFee_ButtonText">Continue</string>
+
+    <!--  PaymentInformationScreen  -->
+    <string name="PaymentInformation">Payment Information</string>
+    <string name="PaymentInformation_TuitionInformation">Tuition Information:</string>
+    <string name="PaymentInformation_ReferenceCode">Reference code</string>
+    <string name="PaymentInformation_StudentName">Student name</string>
+    <string name="PaymentInformation_StudentID">Student ID</string>
+    <string name="PaymentInformation_Content">Content</string>
+    <string name="PaymentInformation_TuitionFee">Tuition fee</string>
+    <string name="PaymentInformation_BeneficiaryAccount">Beneficiary account</string>
+    <string name="PaymentInformation_TransferFee">Transfer fee</string>
+    <string name="PaymentInformation_Total">Total</string>
+    <string name="PaymentInformation_OTP">OTP Authentication</string>
+
 </resources>

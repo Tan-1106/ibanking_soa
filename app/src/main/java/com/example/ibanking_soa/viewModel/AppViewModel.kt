@@ -1,8 +1,10 @@
 package com.example.ibanking_soa.viewModel
 
 import android.content.Context
+import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.core.content.edit
 import androidx.lifecycle.ViewModel
@@ -15,12 +17,15 @@ import com.example.ibanking_soa.uiState.AppUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import java.math.BigDecimal
+import java.text.NumberFormat
+import java.util.Locale
 
 class AppViewModel: ViewModel() {
     private val _uiState = MutableStateFlow(AppUiState())
     val uiState: StateFlow<AppUiState> = _uiState.asStateFlow()
 
-    // LoginScreen
+    // LOGIN SCREEN
     var usernameValue by mutableStateOf("")
         private set
     var passwordValue by mutableStateOf("")
@@ -57,7 +62,9 @@ class AppViewModel: ViewModel() {
         val username = usernameValue
         val password = passwordValue
 
-        var success = false // TODO: AUTH nếu cần
+        // TODO: AUTH nếu cần
+        var success = false
+
 
         if (success) {
             saveCredentials(username, password, context)
@@ -115,4 +122,37 @@ class AppViewModel: ViewModel() {
             Pair("", "")
         }
     }
+
+    // TUITION FEE SCREEN
+    var studentIdValue by mutableStateOf("")
+        private set
+
+    fun clearId() {
+        studentIdValue = ""
+    }
+    fun onStudentIdChange(newValue: String) {
+        studentIdValue = newValue
+    }
+
+    fun formatCurrency(value: BigDecimal): String {
+        val formatter = NumberFormat.getInstance()
+        return formatter.format(value)
+    }
+
+    fun processToPaymentInf(
+        context: Context,
+        navController: NavHostController
+    ) {
+        // TODO: EVENT & BACKEND HANDLING
+        var success = false
+
+        if (success) {
+            navController.navigate(Screens.Otp.name)
+        } else {
+            Toast.makeText(context, "", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    // OTP
+
 }
