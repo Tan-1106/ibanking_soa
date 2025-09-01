@@ -22,7 +22,7 @@
 
     <!--  PaymentInformationScreen  -->
     <string name="PaymentInformation">Payment Information</string>
-    <string name="PaymentInformation_TuitionInformation">Tuition Information:</string>
+    <string name="PaymentInformation_DetailInformation">Detail Information:</string>
     <string name="PaymentInformation_ReferenceCode">Reference code</string>
     <string name="PaymentInformation_StudentName">Student name</string>
     <string name="PaymentInformation_StudentID">Student ID</string>
@@ -32,5 +32,10 @@
     <string name="PaymentInformation_TransferFee">Transfer fee</string>
     <string name="PaymentInformation_Total">Total</string>
     <string name="PaymentInformation_OTP">OTP Authentication</string>
+    <string name="PaymentInformation_Balance">Balance</string>
+    <string name="PaymentInformation_Transfer">Transfer</string>
 
+    <!-- OTP Dialog -->
+    <string name="Otp_Enter">Please enter the OTP sent to your email</string>
+    <string name="Otp_Wrong">Invalid OTP. Please enter it again</string>
 </resources>

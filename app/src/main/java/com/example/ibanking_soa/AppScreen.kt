@@ -7,6 +7,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.ibanking_soa.ui.LoginScreen
+import com.example.ibanking_soa.ui.PaymentInformationScreen
+import com.example.ibanking_soa.ui.TuitionFeeScreen
 import com.example.ibanking_soa.viewModel.AppViewModel
 
 enum class Screens {
@@ -20,7 +22,7 @@ fun AppScreen(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screens.Login.name
+        startDestination = Screens.Otp.name
     ) {
         composable(route = Screens.Login.name) {
             LoginScreen(
@@ -30,11 +32,17 @@ fun AppScreen(
         }
 
         composable(route = Screens.TuitionFee.name) {
-
+            TuitionFeeScreen(
+                appViewModel = appViewModel,
+                navController = navController
+            )
         }
 
         composable(route = Screens.Otp.name) {
-
+            PaymentInformationScreen(
+                appViewModel = appViewModel,
+                navController = navController
+            )
         }
     }
 }

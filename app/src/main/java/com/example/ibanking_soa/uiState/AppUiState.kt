@@ -24,8 +24,8 @@ data class TuitionFee(
 )
 
 data class Payment(
-    val referenceCode: String = "",
-    val beneficiaryAccount: String = "",
+    val referenceCode: String = "RND_PAYMENT_CODE",
+    val beneficiaryAccount: String = "9876543210",
     val transferFee: BigDecimal = BigDecimal(0),
     val total: BigDecimal = BigDecimal(0)
 )

@@ -149,10 +149,36 @@ class AppViewModel: ViewModel() {
         if (success) {
             navController.navigate(Screens.Otp.name)
         } else {
+            // TODO: ERROR MESSAGE FOR TOAST
             Toast.makeText(context, "", Toast.LENGTH_SHORT).show()
         }
     }
 
     // OTP
+    var isOtpBoxVisible by mutableStateOf(false)
 
+    fun verifyBeforeSendOTP(context: Context) {
+        // TODO: DATA VERIFY BEFORE SENDING OTP
+        var success = false
+
+        if (success) {
+            isOtpBoxVisible = true
+        } else {
+            // TODO: ERROR MESSAGE FOR TOAST
+            Toast.makeText(context, "", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    fun onOtpDismiss() {
+        isPasswordVisible = false
+
+        // TODO: More BackEnd Logic
+    }
+
+    var otpValue by mutableStateOf("")
+        private set
+
+    fun onOtpChange(newValue: String) {
+        otpValue = newValue
+    }
 }

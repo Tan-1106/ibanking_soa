@@ -2,8 +2,10 @@ package com.example.ibanking_soa.ui
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -94,6 +96,14 @@ fun TuitionFeeScreen(
                     titleContentColor = BackgroundColor,
                     actionIconContentColor = BackgroundColor
                 )
+            )
+        },
+        bottomBar = {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .background(color = PrimaryColor)
             )
         }
     ) { innerPadding ->
@@ -206,7 +216,6 @@ fun TuitionFeeScreen(
                 TuitionInfLine(
                     lineText = R.string.TuitionFee_StudentName,
                     content = appUiState.tuitionFee.studentFullName,
-                    contentColor = TextColor,
                     modifier = Modifier.fillMaxWidth()
                 )
                 TuitionInfLine(
@@ -218,7 +227,6 @@ fun TuitionFeeScreen(
                 TuitionInfLine(
                     lineText = R.string.TuitionFee_Content,
                     content = appUiState.tuitionFee.content,
-                    contentColor = TextColor,
                     modifier = Modifier.fillMaxWidth()
                 )
             }
@@ -288,12 +296,12 @@ fun TuitionFeeScreen(
 fun TuitionInfLine(
     @StringRes lineText: Int,
     content: String,
-    contentColor: Color,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    contentColor: Color = TextColor
 ) {
     Row(
         horizontalArrangement = Arrangement.Start,
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = Alignment.Top,
         modifier = modifier
             .fillMaxWidth()
             .padding(top = 10.dp)
@@ -303,12 +311,6 @@ fun TuitionInfLine(
             style = CustomTypography.bodySmall,
             color = TextColor,
             modifier = Modifier.fillMaxWidth(0.3f)
-        )
-        Text(
-            text = ":",
-            style = CustomTypography.bodySmall,
-            color = TextColor,
-            modifier = Modifier.width(10.dp)
         )
         Text(
             text = content,
