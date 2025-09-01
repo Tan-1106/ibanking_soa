@@ -1,0 +1,1 @@
+Vào /backend chạy: install-all.bat để tải full cho các service.
