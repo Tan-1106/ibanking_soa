@@ -1,0 +1,55 @@
+version: "3.9"
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: Thang123
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost", "-pThang123"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  user-service:
+    build: ./user-service
+    container_name: user_service
+    restart: always
+    env_file:
+      - ./user-service/.env
+    depends_on:
+      mysql:
+        condition: service_healthy
+    ports:
+      - "4001:4001"
+
+  auth-service:
+    build: ./auth-service
+    container_name: auth_service
+    restart: always
+    env_file:
+      - ./auth-service/.env
+    depends_on:
+      - mysql
+    ports:
+      - "4002:4002"
+
+  otp-service:
+    build: ./otp-service
+    container_name: otp_service
+    restart: always
+    env_file:
+      - ./otp-service/.env
+    depends_on:
+      - mysql
+    ports:
+      - "4003:4003"
+
+volumes:
+  mysql_data:
