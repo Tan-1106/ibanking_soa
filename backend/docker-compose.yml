@@ -36,7 +36,8 @@ services:
     env_file:
       - ./auth-service/.env
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
     ports:
       - "4002:4002"
 
@@ -47,9 +48,22 @@ services:
     env_file:
       - ./otp-service/.env
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
     ports:
       - "4003:4003"
+
+  fee-service:
+    build: ./fee-service
+    container_name: fee_service
+    restart: always
+    env_file:
+      - ./fee-service/.env
+    depends_on:
+      mysql:
+        condition: service_healthy
+    ports:
+      - "4004:4004"
 
 volumes:
   mysql_data:
