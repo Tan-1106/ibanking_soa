@@ -4,11 +4,9 @@ import android.content.Context
 import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.core.content.edit
 import androidx.lifecycle.ViewModel
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
@@ -19,7 +17,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import java.math.BigDecimal
 import java.text.NumberFormat
-import java.util.Locale
 
 class AppViewModel: ViewModel() {
     private val _uiState = MutableStateFlow(AppUiState())
@@ -170,7 +167,7 @@ class AppViewModel: ViewModel() {
     }
 
     fun onOtpDismiss() {
-        isPasswordVisible = false
+        isOtpBoxVisible = false
 
         // TODO: More BackEnd Logic
     }
