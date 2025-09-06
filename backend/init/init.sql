@@ -1,6 +1,7 @@
 -- Tạo databases
 CREATE DATABASE IF NOT EXISTS userdb;
 CREATE DATABASE IF NOT EXISTS otpdb;
+CREATE DATABASE IF NOT EXISTS feedb;
 
 -- Cấp quyền cho user thường
 -- CREATE USER IF NOT EXISTS 'user'@'%' IDENTIFIED BY 'userpassword';

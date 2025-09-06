@@ -1,12 +1,30 @@
 import express from "express";
-import { register, getUser, updateUser, deleteUser, getUserByEmail } from "../controllers/user.controller.js";
+import {
+  register,
+  login,
+  getUser,
+  getUserByEmail,
+  updateUser,
+  deleteUser,
+  getMe
+} from "../controllers/user.controller.js";
+import authMiddleware from "../middlewares/auth.middleware.js";
+import validate from "../middlewares/validate.middleware.js";
+import { registerSchema, loginSchema, updateUserSchema } from "../schemas/user.schema.js";
 
 const router = express.Router();
 
-router.post("/register", register);
-router.get("/:id", getUser);
-router.get("/email/:email", getUserByEmail);
-router.put("/:id", updateUser);
-router.delete("/:id", deleteUser);
+// Public register/login
+router.post("/register", validate(registerSchema), register);
+router.post("/login", validate(loginSchema), login);
+
+// Auth required routes (use auth middleware in real)
+router.get("/me", authMiddleware,  getMe); // trả user hiện tại + balance front 2
+
+// CRUD for users (admin or owner checks in controller)
+router.get("/:id", authMiddleware, getUser);
+router.get("/email/:email", authMiddleware, getUserByEmail);
+router.put("/:id", authMiddleware, validate(updateUserSchema), updateUser);
+router.delete("/:id", authMiddleware, deleteUser);
 
 export default router;

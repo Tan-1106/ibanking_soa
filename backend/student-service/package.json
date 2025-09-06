@@ -1,5 +1,5 @@
 {
-  "name": "user-service",
+  "name": "student-service",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -14,15 +14,11 @@
   "description": "",
   "dependencies": {
     "bcrypt": "^6.0.0",
-    "cors": "^2.8.5",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
-    "express-validator": "^7.2.1",
-    "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.14.4",
-    "sequelize": "^6.37.7",
-    "yup": "^1.7.0"
+    "sequelize": "^6.37.7"
   },
   "devDependencies": {
     "nodemon": "^3.1.10"

@@ -143,12 +143,172 @@
           }
         }
       ]
+    },
+    {
+    "name": "Fee Service",
+      "item": [
+        {
+          "name": "Create Fee",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Tuition Fee\",\n  \"amout\": 1500,\n  \"semester\": 1,\n  \"year\": 2025\n}"
+            },
+            "url": "{{fee_url}}/fees"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "let data = pm.response.json();",
+                  "if (data.id) {",
+                  "  pm.environment.set(\"fee_id\", data.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get All Fees",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "url": "{{fee_url}}/fees"
+          }
+        },
+        {
+          "name": "Get Fee By Id",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "url": "{{fee_url}}/fees/{{fee_id}}"
+          }
+        },
+        {
+          "name": "Update Fee",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Updated Tuition Fee\",\n  \"amout\": 2000,\n  \"semester\": 2,\n  \"year\": 2025\n}"
+            },
+            "url": "{{fee_url}}/fees/{{fee_id}}"
+          }
+        },
+        {
+          "name": "Delete Fee",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "url": "{{fee_url}}/fees/{{fee_id}}"
+          }
+        }
+      ]
+    },
+    {
+    "name": "Student Service",
+      "item": [
+        {
+          "name": "Create Student",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe\",\n  \"age\": 20,\n  \"major\": \"Computer Science\"\n}"
+            },
+            "url": "{{student_url}}/students"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "let data = pm.response.json();",
+                  "if (data.id) {",
+                  "  pm.environment.set(\"student_id\", data.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get All Students",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "url": "{{student_url}}/students"
+          }
+        },
+        {
+          "name": "Get Student By Id",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "url": "{{student_url}}/students/{{student_id}}"
+          }
+        },
+        {
+          "name": "Update Student",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe Updated\",\n  \"age\": 21,\n  \"major\": \"Software Engineering\"\n}"
+            },
+            "url": "{{student_url}}/students/{{student_id}}"
+          }
+        },
+       {
+          "name": "Delete Student",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "url": "{{student_url}}/students/{{student_id}}"
+          }
+        } 
+      ]
     }
   ],
   "variable": [
     { "key": "user_url", "value": "http://localhost:4001" },
     { "key": "auth_url", "value": "http://localhost:4002" },
     { "key": "otp_url", "value": "http://localhost:4003" },
+    { "key": "fee_url", "value": "http://localhost:4004" },
+    { "key": "student_url", "value": "http://localhost:4005" },
     { "key": "user_id", "value": "1" },
     { "key": "jwt_token", "value": "" }
   ]

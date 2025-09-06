@@ -1,22 +1,22 @@
 import app from "./app.js";
 import sequelize from "./config/db.js";
 
-const PORT = process.env.PORT || 4001;
+const PORT = process.env.PORT || 4005;
 
 async function startServer() {
   try {
     await sequelize.authenticate();
-    console.log("✅ User DB connected successfully.");
+    console.log("✅ Student DB connected successfully.");
 
     // sync model User => tự tạo bảng users
     await sequelize.sync({ alter: true });
-    console.log("✅ User table synced.");
+    console.log("✅ Student table synced.");
 
     app.listen(PORT, () => {
-      console.log(`🚀 user-service running at http://localhost:${PORT}`);
+      console.log(`🚀 student-service running at http://localhost:${PORT}`);
     });
   } catch (err) {
-    console.error("❌ Failed to start user-service:", err.message);
+    console.error("❌ Failed to start student-service:", err.message);
     process.exit(1);
   }
 }

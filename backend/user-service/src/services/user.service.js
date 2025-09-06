@@ -1,25 +1,70 @@
 import User from "../models/user.model.js";
 import bcrypt from "bcrypt";
 
-export const registerUser = async (data) => {
-  const hashedPassword = await bcrypt.hash(data.password, 10);
-  const user = await User.create({ ...data, password: hashedPassword });
-  return user;
-};
+// 1 Register a new user
+export const registerUser = async ({ username, password, fullName, email }) => {
+  const existingUser = await User.findOne({ where: { email } });
+  if (existingUser) {
+    throw new Error("Email already in use");
+  }
+  const hashedPassword = await bcrypt.hash(password, 10);
+  const newUser = await User.create({
+    username,
+    password: hashedPassword,
+    fullName,
+    email
+  });
+  return newUser;
+}
 
-export const findUserByEmail = async (email) => {
-  return await User.findOne({ where: { email } });
-};
+// 2 Login user
+export const loginUser = async ({ email, password }) => {
+  const user = await User.findOne({ where: { email } });
+  if (!user) {
+    throw new Error("Invalid email or password");
+  }
+  const isPasswordValid = await bcrypt.compare(password, user.password);
+  if (!isPasswordValid) {
+    throw new Error("Invalid email or password");
+  }
+  // In real app, generate JWT or session here
+  return "dummy-token";
+}
 
+// 3 Get user by ID
 export const getUserById = async (id) => {
-  return await User.findByPk(id);
-};
+  return await User.findByPk(id, { attributes: { exclude: ['password'] } });
+}
 
-export const updateUser = async (id, data) => {
-  await User.update(data, { where: { id } });
-  return await User.findByPk(id);
-};
+// 4 Get user by email
+export const getUserByEmail = async (email) => {
+  return await User.findOne({ where: { email }, attributes: { exclude: ['password'] } });
+}
 
+// 5 Update user
+export const updateUser = async (id, updates) => {
+  const user = await User.findByPk(id);
+  if (!user) {
+    return null;
+  }
+  if (updates.password) {
+    updates.password = await bcrypt.hash(updates.password, 10);
+  }
+  await user.update(updates);
+  return user;
+}
+
+// 6 Delete user
 export const deleteUser = async (id) => {
-  return await User.destroy({ where: { id } });
-};
+  const user = await User.findByPk(id);
+  if (!user) {
+    return false;
+  }
+  await user.destroy();
+  return true;
+}
+
+// 7 Get current user (dummy implementation)
+export const getCurrentUser = async (userId) => {
+  return await User.findByPk(userId, { attributes: { exclude: ['password'] } });
+}
