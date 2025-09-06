@@ -8,47 +8,51 @@ import {
 } from "../controllers/payment.controller.js";
 
 import {
-  appendPaymentHistory,
   getPaymentHistory,
-  queryPaymentHistories
+  queryPaymentHistories,
+  appendPaymentHistory
 } from "../controllers/paymentHistory.controller.js";
+
+import authMiddleware from '../middlewares/auth.middleware.js';
+import idempotencyMiddleware from '../middlewares/idempotency.middleware.js';
+import ServiceAuthMiddleware from '../middlewares/serviceAuth.middleware.js';
+import validate from '../middlewares/validate.middleware.js';
+import { createPaymentSchema, confirmPaymentSchema } from '../schemas/payment.schema.js';
 
 const router = express.Router();
 
-/**
- * Payment flow used by frontend
- */
 
+/**
+ * Payment 
+ */
 // Create payment (user clicks Continue -> create pending payment + OTP send)
-// - validate payload, require auth, support Idempotency-Key header
 router.post("/", 
-  /* authMiddleware, idempotencyMiddleware (read Idempotency-Key header), validate(createPaymentSchema) */
+  authMiddleware, idempotencyMiddleware, validate(createPaymentSchema),
   createPayment
 );
 
 // Confirm (user submits OTP) -> verify OTP, transaction: deduct balance + mark student_fee paid
 router.post("/:paymentId/confirm", 
-  /* authMiddleware, validate({ otpCode }) */
+  authMiddleware, validate({ confirmPaymentSchema }),
   confirmPayment
 );
 
 // Get payment status
-router.get("/:paymentId", /* authMiddleware */ getPayment);
+router.get("/:paymentId", authMiddleware, getPayment);
 
 // List payments (user or admin)
-router.get("/", /* authMiddleware (admin or filter by user) */ listPayments);
+router.get("/", authMiddleware, listPayments);
 
 // Cancel pending payment
-router.post("/:paymentId/cancel", /* authMiddleware */ cancelPayment);
+router.post("/:paymentId/cancel", authMiddleware, cancelPayment);
 
 /**
- * Payment history (owned by Payment Service)
- * - GET history for a payment (used by admin / audit)
+ * Payment history
  */
-router.get("/payments/:paymentId/history", /* authMiddleware */ getPaymentHistory);
-router.get("/payments/history", /* authMiddleware (admin) */ queryPaymentHistories);
+router.get("/payments/:paymentId/history", authMiddleware, getPaymentHistory);
+router.get("/payments/history", authMiddleware, queryPaymentHistories);
 
 // Internal: append history (service-to-service or internal calls) 
-router.post("/:paymentId/history", /* ServiceAuthMiddleware */ appendPaymentHistory);
+router.post("/:paymentId/history", ServiceAuthMiddleware, appendPaymentHistory);
 
 export default router;

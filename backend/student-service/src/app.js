@@ -1,7 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
-import userRoutes from "./routes/students.routes.js";
-import feeRoutes from "./routes/fees.routes.js";
+import userRoutes from "./routes/student.routes.js";
+import feeRoutes from "./routes/fee.routes.js";
 
 dotenv.config();
 const app = express();

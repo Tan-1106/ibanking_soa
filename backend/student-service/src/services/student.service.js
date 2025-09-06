@@ -1,6 +1,6 @@
 import Student from "../models/student.model.js";
 import Fee from "../models/fee.model.js";
-import StudentFee from "../models/student_fee.model.js";
+import StudentFee from "../models/studentFee.model.js";
 
 // 1 Create student
 export const createStudent = async ({ mssv, name, email }) => {

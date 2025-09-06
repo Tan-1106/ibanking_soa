@@ -6,9 +6,9 @@ import {
   updateFee,
   deleteFee
 } from "../controllers/fee.controller.js";
-import { validate } from "../middlewares/validate.middleware.js";
-import { createFeeSchema } from "../schemas/fee.schema.js";
+import validate from "../middlewares/validate.middleware.js";
 import authMiddleware from "../middlewares/auth.middleware.js";
+import { createFeeSchema } from "../schemas/fee.schema.js";
 
 const router = express.Router();
 
