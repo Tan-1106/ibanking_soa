@@ -84,3 +84,10 @@ export const updateStudentFee = async (studentFeeId, updates) => {
 export const getStudentFeeById = async (studentFeeId) => {
   return await StudentFee.findByPk(studentFeeId);
 }
+
+// 9 Get multiple student_fees by IDs (for payment validation)
+export const getStudentFeesByIds = async (studentFeeIds) => {
+  return await StudentFee.findAll({
+    where: { id: studentFeeIds },
+  });
+};

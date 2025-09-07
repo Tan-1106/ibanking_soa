@@ -7,7 +7,8 @@ import {
   getFeesForStudent,
   assignFeesToStudent,
   updateStudentFee,
-  getStudentFeeById
+  getStudentFeeById,
+  getStudentFeesByIds
 } from "../controllers/student.controller.js";
 import { createStudentSchema } from "../schemas/student.schema.js";
 import { assignFeesSchema as payload } from "../schemas/fee.schema.js";
@@ -38,7 +39,10 @@ router.post("/:mssv/fees", validate(payload), assignFeesToStudent);
 // Update a particular student_fee
 router.put("/:mssv/fees/:studentFeeId", updateStudentFee);
 
-// Optional: get student_fee by id
+// Optional: get student_fee by id for detail view or management
 router.get("/fees/id/:studentFeeId", authMiddleware, getStudentFeeById);
+
+// New: Get multiple student_fees by IDs (for payment validation)
+router.post("/fees/batch", authMiddleware, getStudentFeesByIds);
 
 export default router;

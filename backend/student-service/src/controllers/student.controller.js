@@ -108,3 +108,17 @@ export const getStudentFeeById = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+// 9 get multiple student_fees by IDs (for payment validation)
+export const getStudentFeesByIds = async (req, res) => {
+  try {
+    const { studentFeeIds } = req.body;
+    if (!Array.isArray(studentFeeIds) || studentFeeIds.length === 0) {
+      return res.status(400).json({ message: "studentFeeIds must be a non-empty array" });
+    }
+    const studentFees = await studentService.getStudentFeesByIds(studentFeeIds);
+    res.json(studentFees);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
