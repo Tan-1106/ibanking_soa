@@ -1,20 +1,15 @@
 import express from "express";
 import {
-  sendOTP,
-  verifyOTP,
-  getOTP // optional for admin/debug
-} from "../controllers/otp.controller.js";
-
+  send,
+  verify
+} from '../controllers/otp.controller.js';
+import authMiddleware from '../middlewares/auth.middleware.js';
 const router = express.Router();
 
 // Send OTP (called by PaymentService after create payment)
-// - protect with ServiceAuth or allow PaymentService to call (ServiceAuth)
-router.post("/send", /* ServiceAuthMiddleware or authMiddleware */ sendOTP);
+router.post("/send", authMiddleware, send);
 
 // Verify OTP (can be called by PaymentService or PaymentService calls local model)
-router.post("/verify", /* ServiceAuthMiddleware or authMiddleware */ verifyOTP);
-
-// Optional: get OTP record (admin/debug only)
-router.get("/:id", /* authMiddleware (admin) */ getOTP);
+router.post("/verify", authMiddleware, verify);
 
 export default router;

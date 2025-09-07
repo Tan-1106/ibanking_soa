@@ -14,6 +14,6 @@ app.get("/", (req, res) => {
 });
 
 // otp routes
-app.use("/otp", otpRoutes);
+app.use("/otps", otpRoutes);
 
 export default app;

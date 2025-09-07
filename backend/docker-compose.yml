@@ -41,18 +41,6 @@ services:
     ports:
       - "4002:4002"
 
-  # otp-service:
-  #   build: ./otp-service
-  #   container_name: otp_service
-  #   restart: always
-  #   env_file:
-  #     - ./otp-service/.env
-  #   depends_on:
-  #     mysql:
-  #       condition: service_healthy
-  #   ports:
-  #     - "4003:4003"
-
   payment-service:
     build: ./payment-service
     container_name: payment_service
@@ -63,7 +51,21 @@ services:
       mysql:
         condition: service_healthy
     ports:
+    - "4003:4003"
+
+  otp-service:
+    build: ./otp-service
+    container_name: otp_service
+    restart: always
+    env_file:
+      - ./otp-service/.env
+    depends_on:
+      mysql:
+        condition: service_healthy
+    ports:
       - "4004:4004"
+
+
 
 volumes:
   mysql_data:
