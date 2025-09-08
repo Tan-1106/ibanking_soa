@@ -1,6 +1,5 @@
 import app from "./app.js";
 import sequelize from "./config/db.js";
-import User from "./models/user.model.js"; // import để Sequelize biết model
 
 const PORT = process.env.PORT || 4001;
 

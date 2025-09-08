@@ -1,6 +1,5 @@
 import express from "express";
 import dotenv from "dotenv";
-import sequelize from "./config/db.js";
 import userRoutes from "./routes/user.routes.js";
 
 dotenv.config();
@@ -11,6 +10,11 @@ app.use(express.json());
 // test route
 app.get("/", (req, res) => {
   res.json({ service: "user-service", status: "ok" });
+});
+
+// health check route
+app.get("/health", (req, res) => {
+  res.json({ status: "ok" });
 });
 
 // user routes

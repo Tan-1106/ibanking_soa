@@ -28,18 +28,48 @@ services:
         condition: service_healthy
     ports:
       - "4001:4001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4001/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
 
-  auth-service:
-    build: ./auth-service
-    container_name: auth_service
+  student-service:
+    build: ./student-service
+    container_name: student_service
     restart: always
     env_file:
-      - ./auth-service/.env
+      - ./student-service/.env
     depends_on:
       mysql:
         condition: service_healthy
     ports:
       - "4002:4002"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4002/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  payment-service:
+    build: ./payment-service
+    container_name: payment_service
+    restart: always
+    env_file:
+      - ./payment-service/.env
+    depends_on:
+      mysql:
+        condition: service_healthy
+    ports:
+      - "4003:4003"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4003/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   otp-service:
     build: ./otp-service
@@ -51,19 +81,57 @@ services:
       mysql:
         condition: service_healthy
     ports:
-      - "4003:4003"
+      - "4004:4004"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4004/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
 
-  fee-service:
-    build: ./fee-service
-    container_name: fee_service
+  notification-service:
+    build: ./notification-service
+    container_name: notification_service
     restart: always
     env_file:
-      - ./fee-service/.env
+      - ./notification-service/.env
     depends_on:
       mysql:
         condition: service_healthy
     ports:
-      - "4004:4004"
+      - "4005:4005"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4005/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  api-gateway:
+    build: ./api-gateway
+    container_name: api_gateway
+    restart: always
+    env_file:
+      - ./api-gateway/.env
+    depends_on:
+      user-service:
+        condition: service_healthy
+      student-service:
+        condition: service_healthy
+      payment-service:
+        condition: service_healthy
+      otp-service:
+        condition: service_healthy
+      notification-service:
+        condition: service_healthy
+    ports:
+      - "4000:4000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
 
 volumes:
   mysql_data:

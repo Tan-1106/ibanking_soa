@@ -1,29 +1,14 @@
-import express from "express";
-import dotenv from "dotenv";
+import app from "./app.js";
 import sequelize from "./config/db.js";
-import otpRoutes from "./routes/otp.routes.js";
-import OTP from "./models/otp.model.js"; // import để Sequelize biết model
 
-dotenv.config();
-const app = express();
-app.use(express.json());
-
-// test route
-app.get("/", (req, res) => {
-  res.json({ service: "otp-service", status: "ok" });
-});
-
-// otp routes
-app.use("/otp", otpRoutes);
-
-const PORT = process.env.PORT || 4003;
+const PORT = process.env.PORT || 4001;
 
 async function startServer() {
   try {
     await sequelize.authenticate();
     console.log("✅ OTP DB connected successfully.");
 
-    // sync model OTP => tự tạo bảng otps
+    // sync model Payment => tự tạo bảng payments
     await sequelize.sync({ alter: true });
     console.log("✅ OTP table synced.");
 

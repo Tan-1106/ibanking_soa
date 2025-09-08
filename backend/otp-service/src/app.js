@@ -1,6 +1,5 @@
 import express from "express";
 import dotenv from "dotenv";
-import sequelize from "./config/db.js";
 import otpRoutes from "./routes/otp.routes.js";
 
 dotenv.config();
@@ -13,7 +12,12 @@ app.get("/", (req, res) => {
   res.json({ service: "otp-service", status: "ok" });
 });
 
+// health check route
+app.get("/health", (req, res) => {
+  res.json({ status: "ok" });
+});
+
 // otp routes
-app.use("/otp", otpRoutes);
+app.use("/otps", otpRoutes);
 
 export default app;
