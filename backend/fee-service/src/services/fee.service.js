@@ -1,9 +1,9 @@
 import Fee from "../models/fee.model.js";
 
 export const registerFee = async (req, res) => {
-  const { description, amout, semester, year } = req.body;
+  const { description, amount, semester, year } = req.body;
     try {
-        const newFee = await Fee.create({ description, amout, semester, year });
+        const newFee = await Fee.create({ description, amount, semester, year });
         res.status(201).json(newFee);
     } catch (error) {
         res.status(500).json({ message: "Server error", error: error.message });
@@ -32,12 +32,12 @@ export const getFeeById = async (req, res) => {
 
 export const updateFee = async (req, res) => {
     const { id } = req.params;  
-    const { description, amout, semester, year } = req.body;
+    const { description, amount, semester, year } = req.body;
     try {
         const fee = await Fee.findByPk(id);
         if (!fee) return res.status(404).json({ message: "Fee not found" });
         fee.description = description || fee.description;
-        fee.amout = amout || fee.amout;
+        fee.amount = amount || fee.amount;
         fee.semester = semester || fee.semester;
         fee.year = year || fee.year;
         await fee.save();
