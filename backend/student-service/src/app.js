@@ -13,6 +13,11 @@ app.get("/", (req, res) => {
   res.json({ service: "student-service", status: "ok" });
 });
 
+// health check route
+app.get("/health", (req, res) => {
+  res.json({ status: "ok" });
+});
+
 // user routes
 app.use("/students", userRoutes);
 app.use("/fees", feeRoutes);

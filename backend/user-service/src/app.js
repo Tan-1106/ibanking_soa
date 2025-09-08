@@ -12,6 +12,11 @@ app.get("/", (req, res) => {
   res.json({ service: "user-service", status: "ok" });
 });
 
+// health check route
+app.get("/health", (req, res) => {
+  res.json({ status: "ok" });
+});
+
 // user routes
 app.use("/users", userRoutes);
 

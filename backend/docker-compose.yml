@@ -28,6 +28,12 @@ services:
         condition: service_healthy
     ports:
       - "4001:4001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4001/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
 
   student-service:
     build: ./student-service
@@ -40,6 +46,12 @@ services:
         condition: service_healthy
     ports:
       - "4002:4002"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4002/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
 
   payment-service:
     build: ./payment-service
@@ -51,7 +63,13 @@ services:
       mysql:
         condition: service_healthy
     ports:
-    - "4003:4003"
+      - "4003:4003"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4003/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   otp-service:
     build: ./otp-service
@@ -64,6 +82,12 @@ services:
         condition: service_healthy
     ports:
       - "4004:4004"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4004/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
 
   notification-service:
     build: ./notification-service
@@ -76,6 +100,38 @@ services:
         condition: service_healthy
     ports:
       - "4005:4005"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4005/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  api-gateway:
+    build: ./api-gateway
+    container_name: api_gateway
+    restart: always
+    env_file:
+      - ./api-gateway/.env
+    depends_on:
+      user-service:
+        condition: service_healthy
+      student-service:
+        condition: service_healthy
+      payment-service:
+        condition: service_healthy
+      otp-service:
+        condition: service_healthy
+      notification-service:
+        condition: service_healthy
+    ports:
+      - "4000:4000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
 
 volumes:
   mysql_data:

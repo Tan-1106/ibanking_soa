@@ -12,6 +12,11 @@ app.get("/", (req, res) => {
   res.json({ service: "otp-service", status: "ok" });
 });
 
+// health check route
+app.get("/health", (req, res) => {
+  res.json({ status: "ok" });
+});
+
 // otp routes
 app.use("/otps", otpRoutes);
 
