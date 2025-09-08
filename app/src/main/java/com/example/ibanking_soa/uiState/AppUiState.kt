@@ -9,6 +9,7 @@ data class AppUiState(
 )
 
 data class User(
+    val userId: String = "",
     val username: String = "",
     val fullName: String = "Nguyen Van A",
     val phoneNumber: String = "0123 456 789",
