@@ -1,7 +1,15 @@
 <component name="ProjectDictionaryState">
   <dictionary name="project">
     <words>
+      <w>errorlevel</w>
+      <w>jsonwebtoken</w>
+      <w>notificationdb</w>
+      <w>otpdb</w>
+      <w>paymentdb</w>
       <w>randompaymentcode</w>
+      <w>studentdb</w>
+      <w>trước</w>
+      <w>userdb</w>
     </words>
   </dictionary>
 </component>
