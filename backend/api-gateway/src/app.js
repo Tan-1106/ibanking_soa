@@ -1,10 +1,7 @@
-import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
+import express from "express";
 
-import authRoutes from "./routes/auth.routes.js";
-import studentRoutes from "./routes/student.routes.js";
-import paymentRoutes from "./routes/payment.routes.js";
 import proxy from "express-http-proxy";
 
 const app = express();
@@ -12,25 +9,22 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
-const user = proxy("http://user-service:4001");
-const student = proxy("http://student-service:4002");
-const payment = proxy("http://payment-service:4003");
-const otp = proxy("http://otp-service:4004");
-const notification = proxy("http://notification-service:4005");
+const USER_SERVICE_URL = process.env.USER_SERVICE_URL || "http://user-service:4001";
+const STUDENT_SERVICE_URL = process.env.STUDENT_SERVICE_URL || "http://student-service:4002";
+const PAYMENT_SERVICE_URL = process.env.PAYMENT_SERVICE_URL || "http://payment-service:4003";
+const OTP_SERVICE_URL = process.env.OTP_SERVICE_URL || "http://otp-service:4004";
+const NOTIFICATION_SERVICE_URL = process.env.NOTIFICATION_SERVICE_URL || "http://notification-service:4005";
+const user = proxy(USER_SERVICE_URL);
+const student = proxy(STUDENT_SERVICE_URL);
+const payment = proxy(PAYMENT_SERVICE_URL);
+const otp = proxy(OTP_SERVICE_URL);
+const notification = proxy(NOTIFICATION_SERVICE_URL);
 app.use("/user", user);
 app.use("/student", student);
 app.use("/payment", payment);
 app.use("/otp", otp);
 app.use("/notification", notification);
-// Routes
-app.use("/auth", authRoutes);
-app.use("/student", studentRoutes);
-app.use("/payment", paymentRoutes);
 
-// health check route
-app.get("/health", (req, res) => {
-  res.json({ status: "ok" });
-});
 
 // test root
 app.get("/", (req, res) => {

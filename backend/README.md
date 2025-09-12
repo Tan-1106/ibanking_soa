@@ -1,5 +1,17 @@
-Vào /backend chạy: install-all.bat để tải full cho các service.
+# IBanking_SOA
 
-CMD: "docker compose up --build" để chạy docker, cần có mysql server connect trước
+## 📦 How to Start
 
-vào Postman test:
+1. **Start Docker**
+
+- **Dev Environment**
+- docker-compose -f docker-compose.dev.yml up --build
+
+- **Production Environment**
+- docker-compose up --build
+
+2. **_use api_**
+
+# List api
+
+**comming soon**

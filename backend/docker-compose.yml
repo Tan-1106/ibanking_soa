@@ -18,7 +18,9 @@ services:
       retries: 5
 
   user-service:
-    build: ./user-service
+    build:
+      context: ./user-service
+      dockerfile: Dockerfile
     container_name: user_service
     restart: always
     env_file:
@@ -28,6 +30,10 @@ services:
         condition: service_healthy
     ports:
       - "4001:4001"
+    volumes:
+      - ./user-service/src:/app/src
+      - /app/node_modules
+    command: npm start
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:4001/health"]
       interval: 30s
@@ -36,7 +42,9 @@ services:
       start_period: 60s
 
   student-service:
-    build: ./student-service
+    build:
+      context: ./student-service
+      dockerfile: Dockerfile
     container_name: student_service
     restart: always
     env_file:
@@ -46,6 +54,10 @@ services:
         condition: service_healthy
     ports:
       - "4002:4002"
+    volumes:
+      - ./student-service/src:/app/src
+      - /app/node_modules
+    command: npm start
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:4002/health"]
       interval: 30s
@@ -54,7 +66,9 @@ services:
       start_period: 60s
 
   payment-service:
-    build: ./payment-service
+    build:
+      context: ./payment-service
+      dockerfile: Dockerfile
     container_name: payment_service
     restart: always
     env_file:
@@ -64,6 +78,10 @@ services:
         condition: service_healthy
     ports:
       - "4003:4003"
+    volumes:
+      - ./payment-service/src:/app/src
+      - /app/node_modules
+    command: npm start
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:4003/health"]
       interval: 30s
@@ -72,7 +90,9 @@ services:
       start_period: 60s
 
   otp-service:
-    build: ./otp-service
+    build:
+      context: ./otp-service
+      dockerfile: Dockerfile
     container_name: otp_service
     restart: always
     env_file:
@@ -82,6 +102,10 @@ services:
         condition: service_healthy
     ports:
       - "4004:4004"
+    volumes:
+      - ./otp-service/src:/app/src
+      - /app/node_modules
+    command: npm start
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:4004/health"]
       interval: 30s
@@ -90,7 +114,9 @@ services:
       start_period: 60s
 
   notification-service:
-    build: ./notification-service
+    build:
+      context: ./notification-service
+      dockerfile: Dockerfile
     container_name: notification_service
     restart: always
     env_file:
@@ -100,6 +126,10 @@ services:
         condition: service_healthy
     ports:
       - "4005:4005"
+    volumes:
+      - ./notification-service/src:/app/src
+      - /app/node_modules
+    command: npm start
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:4005/health"]
       interval: 30s
@@ -108,7 +138,9 @@ services:
       start_period: 60s
 
   api-gateway:
-    build: ./api-gateway
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
     container_name: api_gateway
     restart: always
     env_file:
@@ -126,6 +158,10 @@ services:
         condition: service_healthy
     ports:
       - "4006:4006"
+    volumes:
+      - ./api-gateway/src:/app/src
+      - /app/node_modules
+    command: npm start
 
 volumes:
   mysql_data:

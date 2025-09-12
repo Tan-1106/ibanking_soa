@@ -20,7 +20,7 @@ services:
   user-service:
     build:
       context: ./user-service
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     container_name: user_service
     restart: always
     env_file:
@@ -44,7 +44,7 @@ services:
   student-service:
     build:
       context: ./student-service
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     container_name: student_service
     restart: always
     env_file:
@@ -68,7 +68,7 @@ services:
   payment-service:
     build:
       context: ./payment-service
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     container_name: payment_service
     restart: always
     env_file:
@@ -92,7 +92,7 @@ services:
   otp-service:
     build:
       context: ./otp-service
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     container_name: otp_service
     restart: always
     env_file:
@@ -116,7 +116,7 @@ services:
   notification-service:
     build:
       context: ./notification-service
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     container_name: notification_service
     restart: always
     env_file:
@@ -140,7 +140,7 @@ services:
   api-gateway:
     build:
       context: ./api-gateway
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     container_name: api_gateway
     restart: always
     env_file:
