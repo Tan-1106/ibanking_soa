@@ -2,16 +2,16 @@
 
 ## 📦 How to Start
 
-1. **Start Docker**
+Open CMD
 
-- **Dev Environment**
-- docker-compose -f docker-compose.dev.yml up --build
+- **_Dev Environment_**
 
-- **Production Environment**
-- docker-compose up --build
+  docker-compose -f docker-compose.dev.yml up --build
 
-2. **_use api_**
+- **_Production Environment_**
 
-# List api
+  docker-compose up --build
 
-**comming soon**
+## List api
+
+**...comming soon...**
