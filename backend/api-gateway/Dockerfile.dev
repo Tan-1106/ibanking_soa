@@ -10,5 +10,3 @@ RUN npm install --production
 COPY . .
 
 EXPOSE 4006
-
-CMD ["npm", "start"]
