@@ -6,6 +6,7 @@ import serviceAuth from "../middlewares/serviceAuth.middleware.js";
 
 const router = express.Router();
 
-router.post("/invoice", serviceAuth, sendInvoice);
+router.post("/invoice", sendInvoice);
+// router.post("/invoice", serviceAuth, sendInvoice);
 
 export default router;

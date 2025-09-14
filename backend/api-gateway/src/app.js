@@ -1,7 +1,7 @@
 import bodyParser from "body-parser";
 import cors from "cors";
 import express from "express";
-
+import errorHandler from "./middleware/errorHandler.middleware.js";
 import proxy from "express-http-proxy";
 
 const app = express();
@@ -19,11 +19,11 @@ const student = proxy(STUDENT_SERVICE_URL);
 const payment = proxy(PAYMENT_SERVICE_URL);
 const otp = proxy(OTP_SERVICE_URL);
 const notification = proxy(NOTIFICATION_SERVICE_URL);
-app.use("/user", user);
-app.use("/student", student);
-app.use("/payment", payment);
-app.use("/otp", otp);
-app.use("/notification", notification);
+app.use("/user-service", user);
+app.use("/student-service", student);
+app.use("/payment-service", payment);
+app.use("/otp-service", otp);
+app.use("/notification-service", notification);
 
 
 // test root
@@ -32,9 +32,6 @@ app.get("/", (req, res) => {
 });
 
 // Error handler
-app.use((err, req, res, next) => {
-  console.error("Gateway error:", err);
-  res.status(500).json({ error: "Internal server error" });
-});
+app.use(errorHandler);
 
 export default app;

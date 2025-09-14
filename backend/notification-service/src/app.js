@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import otpRoutes from "./routes/notification.routes.js";
+import errorHandler from "./middlewares/errorHandler.middleware.js";
 
 dotenv.config();
 const app = express();
@@ -19,5 +20,5 @@ app.get("/health", (req, res) => {
 
 // otp routes
 app.use("/notifications", otpRoutes);
-
+app.use(errorHandler)
 export default app;

@@ -1,9 +1,10 @@
 import jwt from "jsonwebtoken";
+import ApiError from "../utils/ApiError.js";
 
 const authMiddleware = (req, res, next) => {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).json({ message: "No token provided" });
+    throw new ApiError(401, "No token provided", "Authorization header is missing or invalid");
   }
 
   const token = authHeader.split(" ")[1];
@@ -12,7 +13,8 @@ const authMiddleware = (req, res, next) => {
     req.user = decoded; // Lưu thông tin user vào req
     next();
   } catch (err) {
-    return res.status(401).json({ message: "Invalid token" });
+    console.log(err);
+    throw new ApiError(401, "Invalid token", err.message);
   }
 };
 

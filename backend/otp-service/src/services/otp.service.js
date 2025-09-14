@@ -2,16 +2,22 @@ import OTP from "../models/otp.model.js";
 import crypto from "crypto";
 import { Op } from "sequelize";
 import { sendMail } from "./mail.service.js";
-import { otpEmailTemplate } from "../utils/emailTemplate.js";
-
+import { otp_template } from "../utils/emailTemplate.js";
+import "dotenv/config";
+import axios from "axios";
 // Gửi OTP
-export const sendOTP = async (userId, email, purpose) => {
+export const sendOTP = async (userId, purpose, token) => {
   const code = crypto.randomInt(100000, 999999).toString();
   const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
-
+  const response = await axios.get(
+    `${process.env.API_GATEWAY_URL}/user-service/users/me`,
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  const apiresponse = response.data;
+  const user = apiresponse.data;
   const otp = await OTP.create({ userId, code, purpose, expiresAt });
 
-  await sendMail(email, "Mã xác thực OTP", otpEmailTemplate(code));
+  await sendMail(user.email, "Mã xác thực OTP", otp_template(user.email, code));
 
   return { otpId: otp.id, message: "OTP sent successfully" };
 };

@@ -16,7 +16,7 @@ async function startServer() {
       console.log(`🚀 user-service running at http://localhost:${PORT}`);
     });
   } catch (err) {
-    console.error("❌ Failed to start user-service:", err.message);
+    console.error("❌ Failed to start user-service:", err.message, err.stack);
     process.exit(1);
   }
 }

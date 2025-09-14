@@ -1,11 +1,12 @@
 import User from "../models/user.model.js";
 import bcrypt from "bcrypt";
-
+import jwt from "jsonwebtoken";
+import ApiError from "../utils/ApiError.js";
 // 1 Register a new user
 export const registerUser = async ({ username, password, fullName, email }) => {
   const existingUser = await User.findOne({ where: { email } });
   if (existingUser) {
-    throw new Error("Email already in use");
+    throw new ApiError(400, "Email already in use", " A user with email " + email + " already exists ");
   }
   const hashedPassword = await bcrypt.hash(password, 10);
   const newUser = await User.create({
@@ -21,14 +22,18 @@ export const registerUser = async ({ username, password, fullName, email }) => {
 export const loginUser = async ({ email, password }) => {
   const user = await User.findOne({ where: { email } });
   if (!user) {
-    throw new Error("Invalid email or password");
+    throw new ApiError(401, "Login failed", "Invalid email or password");
   }
   const isPasswordValid = await bcrypt.compare(password, user.password);
   if (!isPasswordValid) {
-    throw new Error("Invalid email or password");
+    throw new ApiError(401, "Login failed", "Invalid email or password");
   }
-  // In real app, generate JWT or session here
-  return "dummy-token";
+  const token = jwt.sign(
+    { id: user.id, email: user.email },
+    process.env.JWT_SECRET,
+    { expiresIn: '1h' }
+  );
+  return token;
 }
 
 // 3 Get user by ID

@@ -19,7 +19,7 @@ router.post("/register", validate(registerSchema), register);
 router.post("/login", validate(loginSchema), login);
 
 // Auth required routes (use auth middleware in real)
-router.get("/me", authMiddleware,  getMe); // trả user hiện tại + balance front 2
+router.get("/me", authMiddleware, getMe); // trả user hiện tại + balance front 2
 
 // CRUD for users (admin or owner checks in controller)
 router.get("/:id", authMiddleware, getUser);
