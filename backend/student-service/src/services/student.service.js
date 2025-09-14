@@ -33,20 +33,51 @@ export const deleteStudent = async (mssv) => {
     return true;
 }
 
-// 5 Get fees for student
+// 5 Get unpaid fees for student
+// Trả về danh sách các fee chưa đóng + tổng tiền, call trang 2 khi search bằng mssv
 export const getFeesForStudent = async (mssv) => {
-  const student = await Student.findOne({
-    where: { mssv },
-    include: {
-      model: Fee,
-        through: { attributes: ['id', 'status', 'dueDate'] },
-    },
+  // Lấy student
+  const student = await Student.findOne({ where: { mssv } });
+  if (!student) return null;
+
+  // Lấy studentFee (pending) kèm Fee detail
+  const studentFees = await StudentFee.findAll({
+    where: { studentId: student.id, status: "pending" },
+    include: [
+      {
+        model: Fee,
+        attributes: ["id", "description", "amount", "semester", "year"],
+      },
+    ],
   });
-    if (!student) {
-        return null;
-    }
-    return student.Fees;
-}
+
+  // Tính tổng
+  const totalPending = studentFees.reduce(
+    (sum, sf) => sum + parseFloat(sf.amount),
+    0
+  );
+
+  return {
+    studentId: student.id, // để truyền vào create payment nè
+    fullName: student.fullName, // để hiển thị tên sinh viên nè
+    totalPending, // để hiển thị tổng tiền nè
+    fees: studentFees.map((sf) => ({ // thằng này để bạn làm content nè, tự suy nghĩ làm đi =))), chưa nghĩ ra làm sao
+      studentFeeId: sf.id,
+      status: sf.status,
+      dueDate: sf.dueDate,
+      amount: sf.amount,
+      paidAt: sf.paidAt,
+      paymentRef: sf.paymentRef,
+      fee: {
+        id: sf.Fee.id,
+        description: sf.Fee.description,
+        amountDefault: sf.Fee.amount,
+        semester: sf.Fee.semester,
+        year: sf.Fee.year,
+      },
+    })),
+  };
+};
 
 // 6 Assign fees to student
 export const assignFeesToStudent = async (mssv, fees) => {
@@ -90,4 +121,23 @@ export const getStudentFeesByIds = async (studentFeeIds) => {
   return await StudentFee.findAll({
     where: { id: studentFeeIds },
   });
+};
+
+// 10 Mark fees as paid (gọi từ payment service sau khi thanh toán thành công)
+export const markFeesPaid = async (studentFeeIds) => {
+  if (!studentFeeIds || studentFeeIds.length === 0) {
+    throw new Error("No student fee IDs provided");
+  }
+
+  const fees = await StudentFee.findAll({ where: { id: studentFeeIds } });
+  if (fees.length !== studentFeeIds.length) {
+    throw new Error("Some student fees not found");
+  }
+
+  for (const fee of fees) {
+    fee.status = "paid";
+    await fee.save();
+  }
+
+  return fees;
 };

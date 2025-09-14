@@ -10,5 +10,7 @@ export const createPaymentSchema = yup.object({
 
 // Xác nhận OTP
 export const confirmPaymentSchema = yup.object({
-  otpCode: yup.string().required().length(6),
+  otpCode: yup.string()
+    .matches(/^\d{6}$/, "OTP must be exactly 6 digits")
+    .required(),
 });

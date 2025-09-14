@@ -6,7 +6,9 @@ import {
   getUserByEmail,
   updateUser,
   deleteUser,
-  getMe
+  getMe,
+  deductBalance,
+  refundBalance
 } from "../controllers/user.controller.js";
 import authMiddleware from "../middlewares/auth.middleware.js";
 import validate from "../middlewares/validate.middleware.js";
@@ -26,5 +28,8 @@ router.get("/:id", authMiddleware, getUser);
 router.get("/email/:email", authMiddleware, getUserByEmail);
 router.put("/:id", authMiddleware, validate(updateUserSchema), updateUser);
 router.delete("/:id", authMiddleware, deleteUser);
+
+router.post("/:userId/deduct-balance", authMiddleware, deductBalance); // gọi route này từ payment service để trừ tiền nè
+router.post("/:userId/refund", authMiddleware, refundBalance); // gọi route này từ payment service để hoàn tiền nè
 
 export default router;

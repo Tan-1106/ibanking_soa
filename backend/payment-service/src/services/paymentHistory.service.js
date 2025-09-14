@@ -12,13 +12,22 @@ export const queryPaymentHistories = async (filters = {}) => {
 };
 
 // 3 Append a new history entry to a payment
-export const appendPaymentHistory = async (paymentId, { action, details }) => {
+export const appendPaymentHistory = async (paymentId, {
+  eventType,
+  eventData,
+  actorType,
+  actorId,
+  note
+}) => {
   const payment = await Payment.findByPk(paymentId);
   if (!payment) throw new Error('Payment not found');
-    const newHistory = await PaymentHistory.create({
+
+  return await PaymentHistory.create({
     paymentId,
-    action,
-    details
+    eventType,
+    eventData,
+    actorType,
+    actorId,
+    note
   });
-  return newHistory;
-}
+};

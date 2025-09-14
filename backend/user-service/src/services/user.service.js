@@ -73,3 +73,27 @@ export const deleteUser = async (id) => {
 export const getCurrentUser = async (userId) => {
   return await User.findByPk(userId, { attributes: { exclude: ['password'] } });
 }
+
+// 8 Deduct balance
+export const deductBalance = async (userId, amount) => {
+  const user = await User.findByPk(userId);
+  if (!user) throw new Error("User not found");
+
+  if (parseFloat(user.balance) < parseFloat(amount)) {
+    throw new Error("Insufficient balance");
+  }
+
+  user.balance = parseFloat(user.balance) - parseFloat(amount);
+  await user.save();
+  return user;
+};
+
+// 9 Refund balance
+export const refundBalance = async (userId, amount) => {
+  const user = await User.findByPk(userId);
+  if (!user) throw new Error("User not found");
+
+  user.balance = parseFloat(user.balance) + parseFloat(amount);
+  await user.save();
+  return user;
+};

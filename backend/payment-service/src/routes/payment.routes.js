@@ -17,7 +17,7 @@ import authMiddleware from '../middlewares/auth.middleware.js';
 import idempotencyMiddleware from '../middlewares/idempotency.middleware.js';
 import ServiceAuthMiddleware from '../middlewares/serviceAuth.middleware.js';
 import validate from '../middlewares/validate.middleware.js';
-import { createPaymentSchema, confirmPaymentSchema } from '../schemas/payment.schema.js';
+import { createPaymentSchema } from '../schemas/payment.schema.js';
 
 const router = express.Router();
 
@@ -27,13 +27,14 @@ const router = express.Router();
  */
 // Create payment (user clicks Continue -> create pending payment + OTP send)
 router.post("/", 
-  authMiddleware, idempotencyMiddleware, validate(createPaymentSchema),
+  authMiddleware, idempotencyMiddleware, 
+  //validate(createPaymentSchema),
   createPayment
 );
 
 // Confirm (user submits OTP) -> verify OTP, transaction: deduct balance + mark student_fee paid
 router.post("/:paymentId/confirm", 
-  authMiddleware, validate({ confirmPaymentSchema }),
+  authMiddleware,
   confirmPayment
 );
 

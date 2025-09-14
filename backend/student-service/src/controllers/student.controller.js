@@ -83,3 +83,15 @@ export const getStudentFeesByIds = async (req, res) => {
   const studentFees = await studentService.getStudentFeesByIds(studentFeeIds);
   res.json(new ApiResponse(200, "Student fees fetched successfully", studentFees));
 };
+
+// 10 Mark fees as paid (called from payment service after successful payment)
+// POST /students/fees/mark-paid
+export const markFeesPaid = async (req, res) => {
+  try {
+    const { studentFeeIds } = req.body;
+    const updated = await studentFeeService.markFeesPaid(studentFeeIds);
+    res.json(updated);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
