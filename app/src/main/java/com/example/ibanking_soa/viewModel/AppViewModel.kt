@@ -1,26 +1,34 @@
 package com.example.ibanking_soa.viewModel
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.content.edit
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import com.example.ibanking_soa.Screens
+import com.example.ibanking_soa.repository.UserRepository
+import com.example.ibanking_soa.response.LoginRequest
+import com.example.ibanking_soa.response.LoginResponse
 import com.example.ibanking_soa.uiState.AppUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import java.text.NumberFormat
 
-class AppViewModel: ViewModel() {
+class AppViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(AppUiState())
     val uiState: StateFlow<AppUiState> = _uiState.asStateFlow()
+    private val userRepository = UserRepository()
 
     // LOGIN SCREEN
     var usernameValue by mutableStateOf("")
@@ -31,10 +39,13 @@ class AppViewModel: ViewModel() {
         private set
     var isPasswordRemembered by mutableStateOf(false)
         private set
+    var errorMessage by mutableStateOf("")
+        private set
 
     fun clearUsername() {
         usernameValue = ""
     }
+
     fun clearPassword() {
         passwordValue = ""
     }
@@ -42,12 +53,15 @@ class AppViewModel: ViewModel() {
     fun onUsernameChange(newValue: String) {
         usernameValue = newValue
     }
+
     fun onPasswordChange(newValue: String) {
         passwordValue = newValue
     }
+
     fun onPasswordShowingIconClick() {
         isPasswordVisible = !isPasswordVisible
     }
+
     fun onRememberPasswordClick() {
         isPasswordRemembered = !isPasswordRemembered
     }
@@ -56,19 +70,26 @@ class AppViewModel: ViewModel() {
         context: Context,
         navController: NavHostController
     ) {
+        errorMessage = ""
         val username = usernameValue
         val password = passwordValue
+        val loginRequest = LoginRequest(username, password)
+        viewModelScope.launch {
+            val loginResponse: LoginResponse? = userRepository.login(loginRequest)
+            Log.d("Login", "Login Response: $loginResponse")
+            if (loginResponse != null) {
+                val userData = loginResponse.user
+                _uiState.update {
+                    it.copy(user = userData)
+                }
+                saveCredentials(username, password, context)
 
-        // TODO: AUTH nếu cần
-        var success = false
-
-
-        if (success) {
-            saveCredentials(username, password, context)
-            navController.navigate(Screens.TuitionFee.name)
-        } else {
-            saveCredentials("", "", context)
+                navController.navigate(Screens.TuitionFee.name)
+            } else {
+                errorMessage = "Invalid username or password"
+            }
         }
+
     }
 
     // CREDENTIALS
@@ -127,6 +148,7 @@ class AppViewModel: ViewModel() {
     fun clearId() {
         studentIdValue = ""
     }
+
     fun onStudentIdChange(newValue: String) {
         studentIdValue = newValue
     }

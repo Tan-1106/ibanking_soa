@@ -5,7 +5,8 @@ import java.math.BigDecimal
 data class AppUiState(
     val user: User = User(),
     val tuitionFee: TuitionFee = TuitionFee(),
-    val payment: Payment = Payment()
+    val payment: Payment = Payment(),
+    val erorMessage:String = ""
 )
 
 data class User(

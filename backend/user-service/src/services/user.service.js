@@ -33,7 +33,7 @@ export const loginUser = async ({ email, password }) => {
     process.env.JWT_SECRET,
     { expiresIn: '1h' }
   );
-  return token;
+  return { token, user: user };
 }
 
 // 3 Get user by ID

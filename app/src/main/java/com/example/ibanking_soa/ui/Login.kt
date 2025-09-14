@@ -162,6 +162,23 @@ fun LoginScreen(
                 },
                 modifier = Modifier.width(300.dp)
             )
+            if (appViewModel.errorMessage != "") {
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Start,
+                    modifier = Modifier
+                        .height(40.dp)
+                        .width(300.dp)
+                ) {
+                    Text(
+                        text = appViewModel.errorMessage,
+                        style = CustomTypography.bodySmall,
+                        color = AlertColor
+                    )
+
+                }
+            }
         }
     }
 }
@@ -181,7 +198,7 @@ fun LoginBackground(
             drawCircle(
                 color = SecondaryColor,
                 radius = 150f,
-                center = Offset(size.width , 500f)
+                center = Offset(size.width, 500f)
             )
             drawCircle(
                 color = PrimaryColor,
@@ -191,7 +208,7 @@ fun LoginBackground(
             drawCircle(
                 color = SecondaryColor,
                 radius = 700f,
-                center = Offset(300f , size.height)
+                center = Offset(300f, size.height)
             )
         }
         content()
@@ -293,7 +310,6 @@ fun LoginTextField(
         )
     }
 }
-
 
 
 @Preview(

@@ -178,7 +178,8 @@ fun TuitionFeeScreen(
                     Button(
                         onClick = {
                             // TODO: STUDENT TUITION FEE QUERY
-                            navController.navigate(Screens.Otp.name)
+
+//                            navController.navigate(Screens.Otp.name)
                         },
                         shape = RoundedCornerShape(8.dp),
                         elevation = ButtonDefaults.buttonElevation(4.dp),

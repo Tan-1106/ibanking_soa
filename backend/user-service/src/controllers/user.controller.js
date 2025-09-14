@@ -11,8 +11,8 @@ export const register = async (req, res) => {
 // 2 Login
 export const login = async (req, res) => {
   const { email, password } = req.body;
-  const token = await userService.loginUser({ email, password });
-  res.status(200).json(new ApiResponse(200, "Login successful", { token }));
+  const result = await userService.loginUser({ email, password });
+  res.status(200).json(new ApiResponse(200, "Login successful", result));
 };
 
 // 3 Get user by ID
