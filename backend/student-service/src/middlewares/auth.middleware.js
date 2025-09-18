@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import ApiError from "../utils/ApiError.js";
 
 const authMiddleware = (req, res, next) => {
   const authHeader = req.headers.authorization;
@@ -11,7 +12,8 @@ const authMiddleware = (req, res, next) => {
     req.user = decoded;
     next();
   } catch (err) {
-    res.status(401).json({ message: "Invalid token" });
+    console.error("Token verification failed:", err);
+    throw new ApiError(401, "Invalid token", "Token verification failed" + err.message);
   }
 };
 

@@ -3,8 +3,8 @@ import ApiResponse from "../utils/Api.response.js";
 
 // 1 Create fee
 export const createFee = async (req, res) => {
-  const { type, amount, description } = req.body;
-  const newFee = await feeService.createFee({ type, amount, description });
+  const { description, amount, semester, year } = req.body;
+  const newFee = await feeService.createFee({ description, amount, semester, year });
   res.status(201).json(new ApiResponse(201, "Fee created successfully", newFee));
 };
 

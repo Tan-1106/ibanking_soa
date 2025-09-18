@@ -1,6 +1,6 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../config/db.js";
-
+import Fee from "./fee.model.js";
 const StudentFee = sequelize.define("StudentFee", {
   id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
   studentId: { type: DataTypes.INTEGER, allowNull: false }, // logical FK to students.id
@@ -14,5 +14,8 @@ const StudentFee = sequelize.define("StudentFee", {
   tableName: "student_fees",
   timestamps: true
 });
+
+Fee.hasMany(StudentFee, { foreignKey: "feeId" });
+StudentFee.belongsTo(Fee, { foreignKey: "feeId" });
 
 export default StudentFee;

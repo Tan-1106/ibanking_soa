@@ -1,10 +1,11 @@
 import Student from "../models/student.model.js";
 import Fee from "../models/fee.model.js";
 import StudentFee from "../models/studentFee.model.js";
+import ApiError from "../utils/ApiError.js";
 
 // 1 Create student
-export const createStudent = async ({ mssv, name, email }) => {
-  const newStudent = await Student.create({ mssv, name, email });
+export const createStudent = async ({ mssv, fullName, email }) => {
+  const newStudent = await Student.create({ mssv, fullName, email });
   return newStudent;
 }
 
@@ -16,29 +17,30 @@ export const getStudentByMssv = async (mssv) => {
 // 3 Update student
 export const updateStudent = async (mssv, updates) => {
   const student = await Student.findOne({ where: { mssv } });
-    if (!student) {
-        return null;
-    }
-    await student.update(updates);
-    return student;
+  if (!student) {
+    return null;
+  }
+  await student.update(updates);
+  return student;
 }
 
 // 4 Delete student
 export const deleteStudent = async (mssv) => {
   const student = await Student.findOne({ where: { mssv } });
-    if (!student) {
-        return false;
-    }
-    await student.destroy();
-    return true;
+  if (!student) {
+    return false;
+  }
+  await student.destroy();
+  return true;
 }
 
 // 5 Get unpaid fees for student
 // Trả về danh sách các fee chưa đóng + tổng tiền, call trang 2 khi search bằng mssv
 export const getFeesForStudent = async (mssv) => {
-  // Lấy student
   const student = await Student.findOne({ where: { mssv } });
-  if (!student) return null;
+  if (!student) {
+    throw new ApiError(404, "Student not found", " Student with MSSV " + mssv + " does not exist");
+  }
 
   // Lấy studentFee (pending) kèm Fee detail
   const studentFees = await StudentFee.findAll({
@@ -58,6 +60,7 @@ export const getFeesForStudent = async (mssv) => {
   );
 
   return {
+    isPayable: totalPending > 0,
     studentId: student.id, // để truyền vào create payment nè
     fullName: student.fullName, // để hiển thị tên sinh viên nè
     totalPending, // để hiển thị tổng tiền nè
@@ -78,37 +81,59 @@ export const getFeesForStudent = async (mssv) => {
     })),
   };
 };
+export const searchTuitionByMssv = async (mssv) => {
+  const student = await Student.findOne({ where: { mssv } });
+  if (!student) {
+    throw new ApiError(404, "Student not found", " Student with MSSV " + mssv + " does not exist");
+  }
+
+  const studentFees = await StudentFee.findAll({
+    where: { studentId: student.id, status: "pending" },
+  });
+
+  const totalPending = studentFees.reduce(
+    (sum, sf) => sum + parseFloat(sf.amount),
+    0
+  );
+
+  return {
+    studentId: student.id, // để truyền vào create payment nè
+    fullName: student.fullName, // để hiển thị tên sinh viên nè
+    totalPending,
+  };
+};
+
 
 // 6 Assign fees to student
 export const assignFeesToStudent = async (mssv, fees) => {
   const student = await Student.findOne({ where: { mssv } });
-    if (!student) {
-        throw new Error("Student not found");
+  if (!student) {
+    throw new ApiError(404, "Student not found", " Student with MSSV " + mssv + " does not exist");
+  }
+  for (const feeData of fees) {
+    const fee = await Fee.findByPk(feeData.feeId);
+    if (!fee) {
+      throw new ApiError(404, "Fee not found", " Fee with ID " + feeData.feeId + " does not exist");
     }
-    for (const feeData of fees) {
-        const fee = await Fee.findByPk(feeData.feeId);
-        if (!fee) {
-            throw new Error(`Fee with ID ${feeData.feeId} not found`);
-        }
-        await StudentFee.create({
-            studentId: student.id,
-            feeId: fee.id,
-            amount: feeData.amount,
-            dueDate: feeData.dueDate,
-            status: "pending",
-        });
-    }
-    return await getFeesForStudent(mssv);
+    await StudentFee.create({
+      studentId: student.id,
+      feeId: fee.id,
+      amount: feeData.amount,
+      dueDate: feeData.dueDate,
+      status: "pending",
+    });
+  }
+  return await getFeesForStudent(mssv);
 };
 
 // 7 Update a particular student_fee
 export const updateStudentFee = async (studentFeeId, updates) => {
   const studentFee = await StudentFee.findByPk(studentFeeId);
-    if (!studentFee) {
-        return null;
-    }
-    await studentFee.update(updates);
-    return studentFee;
+  if (!studentFee) {
+    return null;
+  }
+  await studentFee.update(updates);
+  return studentFee;
 }
 
 // 8 Get student_fee by id (optional)
