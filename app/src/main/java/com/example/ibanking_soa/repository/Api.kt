@@ -25,7 +25,7 @@ interface UserApi{
 
 interface TuitionApi{
     @GET("/<<url>>" )
-    suspend fun getTuitionByStudentId(mssv: String): ApiResponse<TuitionFee>
+    suspend fun getTuitionByStudentId(sID: String): ApiResponse<TuitionFee>
 }
 
 

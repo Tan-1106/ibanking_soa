@@ -8,7 +8,7 @@ const NOTIFICATION_SERVICE_URL = process.env.NOTIFICATION_SERVICE_URL;
 const SERVICE_AUTH_TOKEN = process.env.SERVICE_AUTH_TOKEN;
 
 // 1 Create a new payment
-export const createPayment = async ({ userId, studentMssv, studentFeeIds, expectedTotal, token }) => {
+export const createPayment = async ({ userId, studentSID, studentFeeIds, expectedTotal, token }) => {
   // 1. Gọi sang Student Service để lấy danh sách studentFees
   let fees;
   try {
@@ -41,7 +41,7 @@ export const createPayment = async ({ userId, studentMssv, studentFeeIds, expect
   const newPayment = await Payment.create({
     paymentRef: `PAY-${uuidv4()}`,
     payerUserId: userId,
-    studentMssv,
+    studentSID,
     totalAmount: actualTotal,
     status: "pending",
     expiresAt: new Date(Date.now() + 15 * 60 * 1000) // hết hạn sau 15 phút

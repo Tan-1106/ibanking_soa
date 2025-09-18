@@ -14,7 +14,7 @@ const PaymentHistory = sequelize.define("PaymentHistory", {
   eventData: { type: DataTypes.JSON, allowNull: true },
 
   // ai/gì thực hiện event
-  actorType: { typeTran: DataTypes.STRING(50), allowNull: true },
+  actorType: { type: DataTypes.STRING(50), allowNull: true },
 
   // id người thực hiện
   actorId: { type: DataTypes.INTEGER, allowNull: true },

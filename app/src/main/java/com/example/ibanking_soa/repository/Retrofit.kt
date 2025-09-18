@@ -10,7 +10,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 class RetrofitInstance {
     private val retrofit by lazy {
         retrofit2.Retrofit.Builder()
-            .baseUrl("http://192.168.1.52:4006/")
+            .baseUrl("http://10.0.2.2:4006/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
@@ -52,9 +52,9 @@ class UserRepository() {
 }
 class  TuitionRepository() {
     private val api = RetrofitInstance().tuitionApi
-    suspend fun getTuitionByStudentId(mssv: String) : TuitionFee?{
+    suspend fun getTuitionByStudentId(sID: String) : TuitionFee?{
         return try {
-            api.getTuitionByStudentId(mssv=mssv).data
+            api.getTuitionByStudentId(sID=sID).data
         }
         catch (error: Exception) {
             error.printStackTrace()

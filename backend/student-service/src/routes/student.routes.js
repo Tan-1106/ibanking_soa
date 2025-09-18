@@ -1,7 +1,7 @@
 import express from "express";
 import {
   createStudent,
-  getStudentByMssv,
+  getStudentBySID,
   updateStudent,
   deleteStudent,
   getFeesForStudent,
@@ -10,7 +10,7 @@ import {
   getStudentFeeById,
   getStudentFeesByIds,
   markFeesPaid,
-  searchTuitionByMssv,
+  searchTuitionBySID,
 } from "../controllers/student.controller.js";
 import { createStudentSchema } from "../schemas/student.schema.js";
 import { assignFeesSchema as payload } from "../schemas/fee.schema.js";
@@ -24,23 +24,23 @@ const router = express.Router();
  */
 router.post("/", validate(createStudentSchema), createStudent);
 
-// MSSV as primary lookup
-router.get("/:mssv", getStudentByMssv);
-router.put("/:mssv", updateStudent);
-router.delete("/:mssv", deleteStudent);
+// SID as primary lookup
+router.get("/:sID", getStudentBySID);
+router.put("/:sID", updateStudent);
+router.delete("/:sID", deleteStudent);
 
 /**
  * Student fees routes
  */
-// Get fees for student (search by mssv thì gọi route này) ***
-router.get("/:mssv/fees", getFeesForStudent);
-router.get("/search/:mssv", searchTuitionByMssv);
+// Get fees for student (search by sID thì gọi route này) ***
+router.get("/:sID/fees", getFeesForStudent);
+router.get("/search/:sID", searchTuitionBySID);
 
 // Assign fee(s) to student
-router.post("/:mssv/fees", validate(payload), assignFeesToStudent);
+router.post("/:sID/fees", validate(payload), assignFeesToStudent);
 
 // Update a particular student_fee
-router.put("/:mssv/fees/:studentFeeId", updateStudentFee);
+router.put("/:sID/fees/:studentFeeId", updateStudentFee);
 
 // Optional: get student_fee by id for detail view or management
 router.get("/fees/id/:studentFeeId", authMiddleware, getStudentFeeById);

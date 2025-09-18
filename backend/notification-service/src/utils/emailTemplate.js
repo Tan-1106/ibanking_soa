@@ -1,6 +1,6 @@
 /**
  * invoiceEmailTemplate(payment, items)
- * payment: { paymentRef, payerUserId, studentMssv, totalAmount, status, createdAt, ... }
+ * payment: { paymentRef, payerUserId, studentSID, totalAmount, status, createdAt, ... }
  * items: [{ id, studentFeeId, amount }, ...]
  */
 export const invoiceEmailTemplate = (payment, items = []) => {
@@ -16,7 +16,7 @@ export const invoiceEmailTemplate = (payment, items = []) => {
   <div style="font-family: Arial, sans-serif; color:#222; max-width:700px;">
     <h2 style="color:#2d89ef;">Hóa đơn thanh toán</h2>
     <p>Ref: <strong>${payment.paymentRef}</strong></p>
-    <p>MSV người nộp: <strong>${payment.studentMssv || "-"}</strong></p>
+    <p>MSV người nộp: <strong>${payment.studentSID || "-"}</strong></p>
     <p>Trạng thái: <strong>${payment.status}</strong></p>
     <p>Ngày: ${new Date(payment.createdAt || Date.now()).toLocaleString()}</p>
 

@@ -6,9 +6,9 @@ import ApiError from '../utils/ApiError.js';
 
 // 1 Create a new payment
 export const createPayment = async (req, res) => {
-  const { userId, studentMssv, studentFeeIds, expectedTotal } = req.body;
+  const { userId, studentSID, studentFeeIds, expectedTotal } = req.body;
   const token = req.headers['authorization']?.split(' ')[1];
-  const newPayment = await paymentService.createPayment({ userId, studentMssv, studentFeeIds, expectedTotal, token });
+  const newPayment = await paymentService.createPayment({ userId, studentSID, studentFeeIds, expectedTotal, token });
   res.status(201).json(new ApiResponse(201, "Payment created", newPayment));
 };
 // 2 Get payment by ID

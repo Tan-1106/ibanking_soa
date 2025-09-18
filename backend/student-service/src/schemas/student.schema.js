@@ -2,7 +2,7 @@ import * as yup from "yup";
 
 // Tạo student
 export const createStudentSchema = yup.object({
-  mssv: yup.string().required().min(6).max(12),
+  sID: yup.string().required().min(6).max(12),
   fullName: yup.string().required().max(64),
   email: yup.string().required().email(),
 });

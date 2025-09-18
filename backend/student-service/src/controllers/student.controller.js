@@ -7,11 +7,11 @@ export const createStudent = async (req, res) => {
   res.status(201).json(new ApiResponse(201, "Student created successfully", student));
 };
 
-// 2 get student by mssv
-export const getStudentByMssv = async (req, res) => {
-  const student = await studentService.getStudentByMssv(req.params.mssv);
+// 2 get student by sID
+export const getStudentBySID = async (req, res) => {
+  const student = await studentService.getStudentBySID(req.params.sID);
   if (!student) {
-    throw new ApiError(404, "Student not found", " Student with MSSV " + req.params.mssv + " does not exist");
+    throw new ApiError(404, "Student not found", " Student with SID " + req.params.sID + " does not exist");
   }
   res.status(200).json(new ApiResponse(200, "Student fetched successfully", student));
 };
@@ -19,38 +19,38 @@ export const getStudentByMssv = async (req, res) => {
 // 3 update student
 export const updateStudent = async (req, res) => {
   const updatedStudent = await studentService.updateStudent(
-    req.params.mssv,
+    req.params.sID,
     req.body
   );
   if (!updatedStudent) {
-    throw new ApiError(404, "Student not found", " Student with MSSV " + req.params.mssv + " does not exist");
+    throw new ApiError(404, "Student not found", " Student with SID " + req.params.sID + " does not exist");
   }
   res.status(200).json(new ApiResponse(200, "Student updated successfully", updatedStudent));
 }
 
 // 4 delete student
 export const deleteStudent = async (req, res) => {
-  const deleted = await studentService.deleteStudent(req.params.mssv);
+  const deleted = await studentService.deleteStudent(req.params.sID);
   if (!deleted) {
-    throw new ApiError(404, "Student not found", " Student with MSSV " + req.params.mssv + " does not exist");
+    throw new ApiError(404, "Student not found", " Student with SID " + req.params.sID + " does not exist");
   }
   res.json(new ApiResponse(200, "Student deleted successfully", deleted));
 };
 
 // 5 get fees for student
 export const getFeesForStudent = async (req, res) => {
-  const fees = await studentService.getFeesForStudent(req.params.mssv);
+  const fees = await studentService.getFeesForStudent(req.params.sID);
   res.json(new ApiResponse(200, "Fees fetched successfully", fees));
 };
-export const searchTuitionByMssv = async (req, res) => {
-  const result = await studentService.searchTuitionByMssv(req.params.mssv);
+export const searchTuitionBySID = async (req, res) => {
+  const result = await studentService.searchTuitionBySID(req.params.sID);
   res.json(new ApiResponse(200, "Tuition fetched successfully", result));
 };
 
 // 6 assign fees to student
 export const assignFeesToStudent = async (req, res) => {
   const assignedFees = await studentService.assignFeesToStudent(
-    req.params.mssv,
+    req.params.sID,
     req.body.fees
   );
   res.json(new ApiResponse(201, "Fees assigned successfully", assignedFees));
@@ -59,12 +59,12 @@ export const assignFeesToStudent = async (req, res) => {
 // 7 update a particular student_fee
 export const updateStudentFee = async (req, res) => {
   const updatedStudentFee = await studentService.updateStudentFee(
-    req.params.mssv,
+    req.params.sID,
     req.params.studentFeeId,
     req.body
   );
   if (!updatedStudentFee) {
-    throw new ApiError(404, "Student fee not found", " Student fee with ID " + req.params.studentFeeId + " does not exist for student with MSSV " + req.params.mssv);
+    throw new ApiError(404, "Student fee not found", " Student fee with ID " + req.params.studentFeeId + " does not exist for student with SID " + req.params.sID);
   }
   res.json(new ApiResponse(200, "Student fee updated successfully", updatedStudentFee));
 };

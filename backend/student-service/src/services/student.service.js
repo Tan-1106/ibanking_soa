@@ -4,19 +4,19 @@ import StudentFee from "../models/studentFee.model.js";
 import ApiError from "../utils/ApiError.js";
 
 // 1 Create student
-export const createStudent = async ({ mssv, fullName, email }) => {
-  const newStudent = await Student.create({ mssv, fullName, email });
+export const createStudent = async ({ sID, fullName, email }) => {
+  const newStudent = await Student.create({ sID, fullName, email });
   return newStudent;
 }
 
-// 2 Get student by MSSV
-export const getStudentByMssv = async (mssv) => {
-  return await Student.findOne({ where: { mssv } });
+// 2 Get student by SID
+export const getStudentBySID = async (sID) => {
+  return await Student.findOne({ where: { sID } });
 }
 
 // 3 Update student
-export const updateStudent = async (mssv, updates) => {
-  const student = await Student.findOne({ where: { mssv } });
+export const updateStudent = async (sID, updates) => {
+  const student = await Student.findOne({ where: { sID } });
   if (!student) {
     return null;
   }
@@ -25,8 +25,8 @@ export const updateStudent = async (mssv, updates) => {
 }
 
 // 4 Delete student
-export const deleteStudent = async (mssv) => {
-  const student = await Student.findOne({ where: { mssv } });
+export const deleteStudent = async (sID) => {
+  const student = await Student.findOne({ where: { sID } });
   if (!student) {
     return false;
   }
@@ -35,11 +35,11 @@ export const deleteStudent = async (mssv) => {
 }
 
 // 5 Get unpaid fees for student
-// Trả về danh sách các fee chưa đóng + tổng tiền, call trang 2 khi search bằng mssv
-export const getFeesForStudent = async (mssv) => {
-  const student = await Student.findOne({ where: { mssv } });
+// Trả về danh sách các fee chưa đóng + tổng tiền, call trang 2 khi search bằng sID
+export const getFeesForStudent = async (sID) => {
+  const student = await Student.findOne({ where: { sID } });
   if (!student) {
-    throw new ApiError(404, "Student not found", " Student with MSSV " + mssv + " does not exist");
+    throw new ApiError(404, "Student not found", " Student with SID " + sID + " does not exist");
   }
 
   // Lấy studentFee (pending) kèm Fee detail
@@ -81,10 +81,10 @@ export const getFeesForStudent = async (mssv) => {
     })),
   };
 };
-export const searchTuitionByMssv = async (mssv) => {
-  const student = await Student.findOne({ where: { mssv } });
+export const searchTuitionBySID = async (sID) => {
+  const student = await Student.findOne({ where: { sID } });
   if (!student) {
-    throw new ApiError(404, "Student not found", " Student with MSSV " + mssv + " does not exist");
+    throw new ApiError(404, "Student not found", " Student with SID " + sID + " does not exist");
   }
 
   const studentFees = await StudentFee.findAll({
@@ -105,10 +105,10 @@ export const searchTuitionByMssv = async (mssv) => {
 
 
 // 6 Assign fees to student
-export const assignFeesToStudent = async (mssv, fees) => {
-  const student = await Student.findOne({ where: { mssv } });
+export const assignFeesToStudent = async (sID, fees) => {
+  const student = await Student.findOne({ where: { sID } });
   if (!student) {
-    throw new ApiError(404, "Student not found", " Student with MSSV " + mssv + " does not exist");
+    throw new ApiError(404, "Student not found", " Student with SID " + sID + " does not exist");
   }
   for (const feeData of fees) {
     const fee = await Fee.findByPk(feeData.feeId);
@@ -123,7 +123,7 @@ export const assignFeesToStudent = async (mssv, fees) => {
       status: "pending",
     });
   }
-  return await getFeesForStudent(mssv);
+  return await getFeesForStudent(sID);
 };
 
 // 7 Update a particular student_fee
