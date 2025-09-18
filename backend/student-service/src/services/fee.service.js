@@ -1,8 +1,8 @@
 import Fee from "../models/fee.model.js";
 
 // 1 Create fee
-export const createFee = async ({ type, amount, description }) => {
-  const newFee = await Fee.create({ type, amount, description });
+export const createFee = async ({ description, amount, semester, year }) => {
+  const newFee = await Fee.create({ description, amount, semester, year });
   return newFee;
 };
 
@@ -19,19 +19,19 @@ export const listAllFees = async () => {
 // 4 Update fee
 export const updateFee = async (id, updates) => {
   const fee = await Fee.findByPk(id);
-    if (!fee) {
-        return null;
-    }
-    await fee.update(updates);
-    return fee;
+  if (!fee) {
+    return null;
+  }
+  await fee.update(updates);
+  return fee;
 }
 
 // 5 Delete fee
 export const deleteFee = async (id) => {
   const fee = await Fee.findByPk(id);
-    if (!fee) {
-        return false;
-    }
-    await fee.destroy();
-    return true;
+  if (!fee) {
+    return false;
+  }
+  await fee.destroy();
+  return true;
 }

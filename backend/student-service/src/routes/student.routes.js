@@ -9,7 +9,8 @@ import {
   updateStudentFee,
   getStudentFeeById,
   getStudentFeesByIds,
-  markFeesPaid
+  markFeesPaid,
+  searchTuitionByMssv,
 } from "../controllers/student.controller.js";
 import { createStudentSchema } from "../schemas/student.schema.js";
 import { assignFeesSchema as payload } from "../schemas/fee.schema.js";
@@ -33,6 +34,7 @@ router.delete("/:mssv", deleteStudent);
  */
 // Get fees for student (search by mssv thì gọi route này) ***
 router.get("/:mssv/fees", getFeesForStudent);
+router.get("/search/:mssv", searchTuitionByMssv);
 
 // Assign fee(s) to student
 router.post("/:mssv/fees", validate(payload), assignFeesToStudent);
@@ -46,6 +48,6 @@ router.get("/fees/id/:studentFeeId", authMiddleware, getStudentFeeById);
 // New: Get multiple student_fees by IDs (for payment validation)
 router.post("/fees/batch", authMiddleware, getStudentFeesByIds);
 
-router.post("/fees/mark-paid", ServiceAuthMiddleware, markFeesPaid); // gọi route này từ payment service để đánh dấu phí đã được thanh toán
+router.post("/fees/mark-paid", markFeesPaid); // gọi route này từ payment service để đánh dấu phí đã được thanh toán
 
 export default router;

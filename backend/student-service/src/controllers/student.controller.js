@@ -42,6 +42,10 @@ export const getFeesForStudent = async (req, res) => {
   const fees = await studentService.getFeesForStudent(req.params.mssv);
   res.json(new ApiResponse(200, "Fees fetched successfully", fees));
 };
+export const searchTuitionByMssv = async (req, res) => {
+  const result = await studentService.searchTuitionByMssv(req.params.mssv);
+  res.json(new ApiResponse(200, "Tuition fetched successfully", result));
+};
 
 // 6 assign fees to student
 export const assignFeesToStudent = async (req, res) => {

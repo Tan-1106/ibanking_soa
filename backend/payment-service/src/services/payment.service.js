@@ -1,33 +1,32 @@
-import Payment from '../models/payment.model.js';
-import PaymentItem from "../models/paymentItem.model.js";
-import PaymentHistory from './paymentHistory.service.js';
-import { appendPaymentHistory } from "../services/paymentHistory.service.js";
 import axios from 'axios';
 import { v4 as uuidv4 } from "uuid";
-
+import Payment from '../models/payment.model.js';
+import PaymentItem from "../models/paymentItem.model.js";
+import ApiError from '../utils/ApiError.js';
 const STUDENT_SERVICE_URL = process.env.STUDENT_SERVICE_URL;
 const NOTIFICATION_SERVICE_URL = process.env.NOTIFICATION_SERVICE_URL;
 const SERVICE_AUTH_TOKEN = process.env.SERVICE_AUTH_TOKEN;
 
 // 1 Create a new payment
-export const createPayment = async ({ userId, studentMssv, studentFeeIds, expectedTotal }) => {
+export const createPayment = async ({ userId, studentMssv, studentFeeIds, expectedTotal, token }) => {
   // 1. Gọi sang Student Service để lấy danh sách studentFees
   let fees;
   try {
+    const url = `${STUDENT_SERVICE_URL}/students/fees/batch`;
+    console.log(`URL: ${url}, studentFeeIds: ${studentFeeIds}`);
     const response = await axios.post(
-      `${STUDENT_SERVICE_URL}/students/fees/batch`,
+      url,
       { studentFeeIds },
-      { headers: { "x-service-token": SERVICE_AUTH_TOKEN } }
+      { headers: { "Authorization": `Bearer ${token}` } }
     );
-    fees = response.data;
+    fees = response.data.data;
   } catch (err) {
-    throw new Error(`[PaymentService] Failed to fetch fees: ${err.message}`);
+    throw new ApiError(502, "Bad Gateway", `[PaymentService] Failed to fetch student fees: ${err.message}`);
   }
 
   if (!fees || fees.length === 0) {
-    throw new Error("No valid fees found for payment");
+    throw new ApiError(404, "No valid fees found", "No valid fees found for payment");
   }
-
   // 2. Tính tổng tiền thực tế từ DB
   const actualTotal = fees.reduce((sum, f) => sum + parseFloat(f.amount), 0);
 
