@@ -3,6 +3,7 @@
     <words>
       <w>errorlevel</w>
       <w>jsonwebtoken</w>
+      <w>mssv</w>
       <w>notificationdb</w>
       <w>otpdb</w>
       <w>paymentdb</w>

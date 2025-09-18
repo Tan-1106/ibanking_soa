@@ -247,37 +247,6 @@ fun PaymentInformationScreen(
 }
 
 @Composable
-fun PaymentInfLine(
-    @StringRes lineText: Int,
-    content: String,
-    modifier: Modifier = Modifier,
-    contentColor: Color = TextColor
-) {
-    Row(
-        horizontalArrangement = Arrangement.Start,
-        verticalAlignment = Alignment.Top,
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(top = 10.dp)
-    ) {
-        Text(
-            text = stringResource(lineText),
-            style = CustomTypography.bodySmall,
-            color = TextColor,
-            modifier = Modifier.fillMaxWidth(0.4f)
-        )
-        Text(
-            text = content,
-            style = CustomTypography.bodyMedium,
-            fontWeight = FontWeight.Bold,
-            color = contentColor,
-            textAlign = TextAlign.End,
-            modifier = Modifier.fillMaxWidth()
-        )
-    }
-}
-
-@Composable
 fun OtpDialogCustom(
     otpLength: Int,
     otpValue: String,

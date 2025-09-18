@@ -1,4 +1,4 @@
-package com.example.ibanking_soa.response
+package com.example.ibanking_soa.dto
 
 import com.example.ibanking_soa.uiState.User
 

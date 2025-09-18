@@ -4,6 +4,7 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,6 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.PersonSearch
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
@@ -50,7 +52,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.ibanking_soa.R
-import com.example.ibanking_soa.Screens
 import com.example.ibanking_soa.ui.theme.AcceptColor
 import com.example.ibanking_soa.ui.theme.AlertColor
 import com.example.ibanking_soa.ui.theme.BackgroundColor
@@ -80,16 +81,23 @@ fun TuitionFeeScreen(
                     )
                 },
                 actions = {
-                    IconButton (
-                        onClick = {
-                            // TODO: LOG OUT
-                        }
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ExitToApp,
-                            contentDescription = null
-                        )
-                    }
+                    Icon(
+                        imageVector = Icons.Default.History,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .clickable {
+                                appViewModel.onViewHistoryClick(navController = navController)
+                            }
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ExitToApp,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .clickable {
+                                // TODO: LOG OUT
+                            }
+                    )
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = PrimaryColor,

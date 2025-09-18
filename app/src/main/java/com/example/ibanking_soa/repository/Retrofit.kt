@@ -1,9 +1,9 @@
 package com.example.ibanking_soa.repository
 
 import android.util.Log
-import com.example.ibanking_soa.response.ListUserResponse
-import com.example.ibanking_soa.response.LoginRequest
-import com.example.ibanking_soa.response.LoginResponse
+import com.example.ibanking_soa.dto.ListUserResponse
+import com.example.ibanking_soa.dto.LoginRequest
+import com.example.ibanking_soa.dto.LoginResponse
 import com.example.ibanking_soa.uiState.TuitionFee
 import retrofit2.converter.gson.GsonConverterFactory
 

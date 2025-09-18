@@ -38,4 +38,17 @@
     <!-- OTP Dialog -->
     <string name="Otp_Enter">Please enter the OTP sent to your email</string>
     <string name="Otp_Wrong">Invalid OTP. Please enter it again</string>
+
+    <!-- Payment History -->
+    <string name="PaymentHistory">Payment History</string>
+    <string name="PaymentHistory_TuitionPayment">Tuition payment</string>
+    
+    <!-- Payment Details -->
+    <string name="PaymentDetails">Payment Details</string>
+    <string name="PaymentDetails_Success">Successful</string>
+    <string name="PaymentDetails_ReferenceCode">Reference Code</string>
+    <string name="PaymentDetails_Date">Date</string>
+    <string name="PaymentDetails_BeneficiaryAccount">Beneficiary account</string>
+    <string name="PaymentDetails_Amount">Payment amount</string>
+    <string name="PaymentDetails_Content">Content</string>
 </resources>

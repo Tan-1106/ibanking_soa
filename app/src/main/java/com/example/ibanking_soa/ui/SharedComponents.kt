@@ -3,13 +3,11 @@ package com.example.ibanking_soa.ui
 import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
@@ -29,6 +27,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.ibanking_soa.ui.theme.BackgroundColor
@@ -143,6 +142,38 @@ fun DashedDivider(
             strokeWidth = strokeWidth,
             cap = StrokeCap.Round,
             pathEffect = PathEffect.dashPathEffect(floatArrayOf(dashPx, gapPx), 0f)
+        )
+    }
+}
+
+// Payment Information Line
+@Composable
+fun PaymentInfLine(
+    @StringRes lineText: Int,
+    content: String,
+    modifier: Modifier = Modifier,
+    contentColor: Color = TextColor
+) {
+    Row(
+        horizontalArrangement = Arrangement.Start,
+        verticalAlignment = Alignment.Top,
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(top = 10.dp)
+    ) {
+        Text(
+            text = stringResource(lineText),
+            style = CustomTypography.bodySmall,
+            color = TextColor,
+            modifier = Modifier.fillMaxWidth(0.4f)
+        )
+        Text(
+            text = content,
+            style = CustomTypography.bodyMedium,
+            fontWeight = FontWeight.Bold,
+            color = contentColor,
+            textAlign = TextAlign.End,
+            modifier = Modifier.fillMaxWidth()
         )
     }
 }

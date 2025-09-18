@@ -14,9 +14,10 @@ import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import com.example.ibanking_soa.Screens
 import com.example.ibanking_soa.repository.UserRepository
-import com.example.ibanking_soa.response.LoginRequest
-import com.example.ibanking_soa.response.LoginResponse
+import com.example.ibanking_soa.dto.LoginRequest
+import com.example.ibanking_soa.dto.LoginResponse
 import com.example.ibanking_soa.uiState.AppUiState
+import com.example.ibanking_soa.uiState.PaymentHistoryItem
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -199,5 +200,28 @@ class AppViewModel : ViewModel() {
 
     fun onOtpChange(newValue: String) {
         otpValue = newValue
+    }
+
+    // HISTORY
+    fun onViewHistoryClick(
+        navController: NavHostController
+    ) {
+        // TODO: GET DATA FOR UI STATE
+
+        navController.navigate(Screens.HistoryList.name)
+    }
+
+    // PAYMENT DETAILS
+    fun onViewPaymentDetailsClick(
+        selectedPayment: PaymentHistoryItem,
+        navController: NavHostController
+    ) {
+        _uiState.update {
+            it.copy(
+                selectedPayment = selectedPayment
+            )
+        }
+
+        navController.navigate(Screens.HistoryDetails.name)
     }
 }
