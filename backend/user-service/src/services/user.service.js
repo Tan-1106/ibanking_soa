@@ -77,10 +77,11 @@ export const getCurrentUser = async (userId) => {
 // 8 Deduct balance
 export const deductBalance = async (userId, amount) => {
   const user = await User.findByPk(userId);
-  if (!user) throw new Error("User not found");
+  if (!user)
+    throw new ApiError(404, "User not found", "User");
 
   if (parseFloat(user.balance) < parseFloat(amount)) {
-    throw new Error("Insufficient balance");
+    throw new ApiError(400, "Insufficient balance", "User");
   }
 
   user.balance = parseFloat(user.balance) - parseFloat(amount);
@@ -91,7 +92,8 @@ export const deductBalance = async (userId, amount) => {
 // 9 Refund balance
 export const refundBalance = async (userId, amount) => {
   const user = await User.findByPk(userId);
-  if (!user) throw new Error("User not found");
+  if (!user)
+    throw new ApiError(404, "User not found", "User with ID " + userId + " does not exist");
 
   user.balance = parseFloat(user.balance) + parseFloat(amount);
   await user.save();

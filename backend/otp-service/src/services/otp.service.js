@@ -6,7 +6,7 @@ import { otp_template } from "../utils/emailTemplate.js";
 import "dotenv/config";
 import axios from "axios";
 // Gửi OTP
-export const sendOTP = async (userId, purpose, token) => {
+export const sendOTP = async (userId, token) => {
   const code = crypto.randomInt(100000, 999999).toString();
   const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
   const response = await axios.get(
@@ -15,7 +15,7 @@ export const sendOTP = async (userId, purpose, token) => {
   );
   const apiresponse = response.data;
   const user = apiresponse.data;
-  const otp = await OTP.create({ userId, code, purpose, expiresAt });
+  const otp = await OTP.create({ userId, code, expiresAt });
 
   await sendMail(user.email, "Mã xác thực OTP", otp_template(user.email, code));
 
@@ -30,15 +30,14 @@ export const verifyOtp = async (userId, code) => {
   }
 
   if (otp.expiresAt < new Date()) {
-    await otp.destroy(); // Xóa luôn OTP hết hạn
+    await otp.destroy();
     return { success: false, error: "OTP expired" };
   }
 
-  await otp.destroy(); // Xóa sau khi dùng thành công
+  await otp.destroy();
   return { success: true, message: "OTP verified" };
 };
 
-// Hàm dọn OTP hết hạn (gọi bằng cron job)
 export const cleanupExpiredOtp = async () => {
   const deleted = await OTP.destroy({
     where: {

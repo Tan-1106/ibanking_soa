@@ -1,16 +1,17 @@
-import * as paymentService from '../services/payment.service.js';
 import axios from 'axios';
-import * as paymentHistoryService from '../services/paymentHistory.service.js';
+import paymentService from '../services/payment.service.js';
 import ApiResponse from '../utils/Api.response.js';
 import ApiError from '../utils/ApiError.js';
 
 // 1 Create a new payment
 export const createPayment = async (req, res) => {
-  const { userId, studentSID, studentFeeIds, expectedTotal } = req.body;
+  const { userId, studentId, studentFeeIds } = req.body;
   const token = req.headers['authorization']?.split(' ')[1];
-  const newPayment = await paymentService.createPayment({ userId, studentSID, studentFeeIds, expectedTotal, token });
+  const newPayment = await paymentService.createPayment({ userId, studentId, studentFeeIds, token });
   res.status(201).json(new ApiResponse(201, "Payment created", newPayment));
 };
+
+
 // 2 Get payment by ID
 export const getPayment = async (req, res) => {
   const { id } = req.params;
@@ -43,38 +44,3 @@ export const cancelPayment = async (req, res) => {
   res.status(200).json(new ApiResponse(200, "Payment cancelled", cancelledPayment));
 };
 
-// 6 Confirm payment (verify OTP, deduct balance, mark fee paid) - Placeholder
-export const confirmPayment = async (req, res, next) => {
-  try {
-    const { paymentId } = req.params;
-    const userId = req.user.id;
-    const { otpCode } = req.body;
-
-    // Step 1: Verify OTP
-    const otpRes = await axios.post(
-      `${OTP_SERVICE_URL}/verify`,
-      { userId, code: otpCode },
-      { headers: { "x-service-token": SERVICE_AUTH_TOKEN } }
-    );
-    if (!otpRes.data.success) {
-      return res.status(400).json({ success: false, message: "Invalid or expired OTP" });
-    }
-
-    // Step 2: Core confirm
-    const payment = await paymentService.confirmPayment(paymentId, userId);
-
-    // Step 3: Emit fake event
-    // sau này thay bằng Kafka.publish("PAYMENT_CONFIRMED", { payment, userId })
-    axios.post(
-      `${NOTIFICATION_SERVICE_URL}/events/payment-confirmed`,
-      { payment, userId },
-      { headers: { "x-service-token": SERVICE_AUTH_TOKEN } }
-    ).catch(err => console.error("Notify failed:", err.message));
-
-    await paymentHistoryService.appendPaymentHistory(paymentId, "Payment confirmed");
-
-    return res.status(200).json({ success: true, data: payment });
-  } catch (err) {
-    next(err);
-  }
-};

@@ -3,8 +3,8 @@ import * as otpService from "../services/otp.service.js";
 import ApiError from "../utils/ApiError.js";
 // Gửi OTP
 export const send = async (req, res) => {
-  const { userId, purpose } = req.body;
-  const result = await otpService.sendOTP(userId, purpose, req.headers.authorization.split(" ")[1]);
+  const { userId } = req.body;
+  const result = await otpService.sendOTP(userId, req.headers.authorization.split(" ")[1]);
   res.status(200).json(new ApiResponse(200, "OTP sent successfully", result));
 };
 

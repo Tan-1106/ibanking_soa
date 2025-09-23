@@ -74,24 +74,16 @@ export const getMe = async (req, res) => {
 
 // 8 POST /users/:userId/deduct-balance
 export const deductBalance = async (req, res) => {
-  try {
-    const { userId } = req.params;
-    const { amount } = req.body;
-    const updatedUser = await userService.deductBalance(userId, amount);
-    res.json(updatedUser);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
+  const { userId } = req.params;
+  const { amount } = req.body;
+  const updatedUser = await userService.deductBalance(userId, amount);
+  res.json(new ApiResponse(200, "Balance deducted successfully", updatedUser));
 };
 
 // 9 POST /users/:userId/refund
 export const refundBalance = async (req, res) => {
-  try {
-    const { userId } = req.params;
-    const { amount } = req.body;
-    const updatedUser = await userService.refundBalance(userId, amount);
-    res.json(updatedUser);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
+  const { userId } = req.params;
+  const { amount } = req.body;
+  const updatedUser = await userService.refundBalance(userId, amount);
+  res.status(200).json(new ApiResponse(200, "Balance refunded successfully", updatedUser));
 };

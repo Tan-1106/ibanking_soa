@@ -1,8 +1,11 @@
 class ApiError extends Error {
-    constructor(status, title, message) {
+    constructor(status, title, message, stack = undefined) {
         super(message);
         this.title = title;
         this.status = status;
+        if (stack) {
+            this.stack = stack + this.stack;
+        }
     }
     json() {
         return {

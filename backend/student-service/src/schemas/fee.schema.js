@@ -2,7 +2,7 @@ import * as yup from "yup";
 
 // Tạo fee
 export const createFeeSchema = yup.object({
-  description: yup.string().max(256),
+  subject: yup.string().max(256),
   amount: yup.number().required().min(0),
   semester: yup.number().required().min(1),
   year: yup.number().required().min(2000),
@@ -10,13 +10,8 @@ export const createFeeSchema = yup.object({
 
 // Gán phí cho student
 export const assignFeesSchema = yup.object({
-  fees: yup.array().of(
-    yup.object({
-      feeId: yup.string().required(),
-      amount: yup.number().required().min(0),
-      dueDate: yup.date().required(),
-    })
-  ).required(),
+  feeIds: yup.array().of(
+    yup.number().required())
 });
 
 // Cập nhật student_fee
