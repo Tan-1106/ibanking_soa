@@ -44,7 +44,21 @@ const studentController = {
     const tuition = await studentService.getTuitionByStudentId(req.params.id);
     res.json(new ApiResponse(200, "Tuition fetched successfully", tuition));
   },
-
+  getStudentFeeByStudentId: async (req, res) => {
+    const studentFees = await studentService.getStudentFeesByStudentId(req.params.studentId);
+    res.json(new ApiResponse(200, "Student fees fetched successfully", studentFees));
+  },
+  markProcessingStudentFees: async (req, res) => {
+    const { studentFeeIds } = req.body;
+    if (!studentFeeIds || studentFeeIds.length === 0) {
+      throw new ApiError(400, "Invalid request", " studentFeeIds must be a non-empty array ");
+    }
+    const processingFees = await studentService.markProcessingStudentFees(studentFeeIds);
+    if (!processingFees) {
+      throw new ApiError(404, "Not Found", "Some student fees not found or could not be marked as processing ");
+    }
+    res.json(new ApiResponse(200, "Student fees marked as processing", processingFees));
+  },
   // 6 assign fees to student
   assignFeesToStudent: async (req, res) => {
     const assignedFees = await studentService.assignFeesToStudent(

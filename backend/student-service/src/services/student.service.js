@@ -2,7 +2,7 @@ import Student from "../models/student.model.js";
 import Fee from "../models/fee.model.js";
 import StudentFee from "../models/studentFee.model.js";
 import ApiError from "../utils/ApiError.js";
-
+const EXPIRED_PAYMENT_TIMEOUT = 5 * 60 * 1000;
 const studentService = {
 
 
@@ -12,12 +12,10 @@ const studentService = {
     return newStudent;
   },
 
-  // 2 Get student by ID
   getStudentByID: async (id) => {
     return await Student.findOne({ where: { id } });
   },
 
-  // 3 Update student
   updateStudentById: async (id, updates) => {
     const student = await Student.findOne({ where: { id } });
     if (!student) {
@@ -27,7 +25,6 @@ const studentService = {
     return student;
   },
 
-  // 4 Delete student
   deleteStudentById: async (id) => {
     const student = await Student.findOne({ where: { id } });
     if (!student) {
@@ -37,15 +34,12 @@ const studentService = {
     return true;
   },
 
-  // 5 Get unpaid fees for student
-  // Trả về danh sách các fee chưa đóng + tổng tiền, call trang 2 khi search bằng id
   getTuitionByStudentId: async (studentId) => {
     const student = await Student.findOne({ where: { id: studentId } });
     if (!student) {
       throw new ApiError(404, "Student not found", " Student with SID " + studentId + " does not exist");
     }
 
-    // Lấy studentFee (pending) kèm Fee detail
     const studentFees = await StudentFee.findAll({
       where: { studentId: student.id, status: "unpaid" },
       include: [
@@ -56,7 +50,6 @@ const studentService = {
       ],
     });
 
-    // Tính tổng
     const totalPending = studentFees.reduce(
       (sum, sf) => sum + parseFloat(sf.amount),
       0
@@ -64,10 +57,10 @@ const studentService = {
 
     return {
       isPayable: totalPending > 0,
-      studentId: student.id, // để truyền vào create payment nè
-      fullName: student.fullName, // để hiển thị tên sinh viên nè
-      totalPending, // để hiển thị tổng tiền nè
-      fees: studentFees.map((sf) => ({ // thằng này để bạn làm content nè, tự suy nghĩ làm đi =))), chưa nghĩ ra làm sao
+      studentId: student.id,
+      fullName: student.fullName,
+      totalPending,
+      studentFees: studentFees.map((sf) => ({
         studentFeeId: sf.id,
         status: sf.status,
         dueDate: sf.dueDate,
@@ -86,7 +79,6 @@ const studentService = {
   },
 
 
-  // 6 Assign fees to student
   assignFeesToStudent: async (studentId, feeIds) => {
     const student = await Student.findOne({ where: { id: studentId } });
     if (!student) {
@@ -106,7 +98,6 @@ const studentService = {
     return true;
   },
 
-  // 7 Update a particular student_fee
   updateStudentFee: async (studentFeeId, updates) => {
     const studentFee = await StudentFee.findByPk(studentFeeId);
     if (!studentFee) {
@@ -115,19 +106,35 @@ const studentService = {
     await studentFee.update(updates);
     return studentFee;
   },
-  // 8 Get student_fee by id (optional)
   getStudentFeeById: async (studentFeeId) => {
     return await StudentFee.findByPk(studentFeeId);
   },
 
-  // 9 Get multiple student_fees by IDs (for payment validation)
-  getStudentFeesByIds: async (studentFeeIds) => {
-    return await StudentFee.findAll({
-      where: { id: studentFeeIds },
-    });
+  getStudentFeesByStudentId: async (studentId) => {
+    const student = await Student.findOne({ where: { id: studentId } });
+    if (!student) {
+      throw new ApiError(404, "Student not found", " Student with ID " + studentId + " does not exist");
+    }
+    return await StudentFee.findAll({ where: { studentId: student.id, status: "unpaid" } });
+  },
+  markProcessingStudentFees: async (studentFeeIds) => {
+    const result = await StudentFee.update(
+      { status: "processing" },
+      { where: { id: studentFeeIds, status: "unpaid" } }
+    );
+    setTimeout(async () => {
+      const processingFees = await StudentFee.findAll({
+        where: { id: studentFeeIds, status: "processing" }
+      });
+      for (const fee of processingFees) {
+        await fee.update({ status: "unpaid" });
+      }
+    }, EXPIRED_PAYMENT_TIMEOUT);
+
+    return result > 0;
+
   },
 
-  // 10 Mark fees as paid (gọi từ payment service sau khi thanh toán thành công)
   markFeesPaid: async (studentFeeIds, paymentRef) => {
     if (!studentFeeIds || studentFeeIds.length === 0) {
       throw new ApiError(400, "Invalid request", " studentFeeIds must be a non-empty array ");

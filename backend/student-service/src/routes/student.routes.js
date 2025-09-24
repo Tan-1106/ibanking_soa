@@ -11,26 +11,19 @@ const router = express.Router();
  * Student CRUD
  */
 
-router.post("/", validate(createStudentSchema), studentController.createStudent);
 
-// studentId as primary lookup
+router.post("/", validate(createStudentSchema), studentController.createStudent);
 router.get("/:id", studentController.getStudentByID);
 router.put("/:id", studentController.updateStudent);
 router.delete("/:id", studentController.deleteStudent);
 
-/**
- * Student fees routes
- */
-//!
-// Get fees for student (search by sID thì gọi route này) ***
 router.get("/tuition/:id", studentController.getTuitionByStudentId);
+router.get("/fees/:studentId", studentController.getStudentFeeByStudentId);
+router.get("/fees/:studentFeeId", studentController.getStudentFeeById);
 
-router.get("/fees/:studentFeeId", authMiddleware, studentController.getStudentFeeById);
+router.post("/fees/processing", studentController.markProcessingStudentFees);
 router.post("/fees/mark-paid", studentController.markFeesPaid); // gọi route này từ payment service để đánh dấu phí đã được thanh toán
-
-// Assign fee(s) to student
 router.post("/fees/:studentId", validate(payload), studentController.assignFeesToStudent);
-// Update a particular student_fee
 router.put("/fees/:studentFeeId", studentController.updateStudentFee);
 
 
