@@ -18,24 +18,21 @@ const paymentController = {
   },
 
 
-  // 2 Get payment by ID
   getPayment: async (req, res) => {
-    const { id } = req.params;
-    const payment = await paymentService.getPaymentById(id);
+    const { paymentId } = req.params;
+    const payment = await paymentService.getPaymentById(paymentId);
     if (!payment) {
-      throw new ApiError(404, "Not Found", "Payment with id " + id + " does not exist");
+      throw new ApiError(404, "Not Found", "Payment with id " + paymentId + " does not exist");
     }
     res.status(200).json(new ApiResponse(200, "Payment retrieved", payment));
   },
 
-  // 3 List payments with optional filters
   listPayments: async (req, res) => {
     const filters = req.query;
     const payments = await paymentService.listPayments(filters);
     res.status(200).json(new ApiResponse(200, "Payments fetched successfully", payments));
   },
 
-  // 4 Update payment status
   updatePaymentStatus: async (req, res) => {
     const { id } = req.params;
     const { status } = req.body;
@@ -43,12 +40,17 @@ const paymentController = {
     res.status(200).json(new ApiResponse(200, "Payment status updated", updatedPayment));
   },
 
-  // 5 Cancel a pending payment
-  cancelPayment: async (req, res) => {
-    const { id } = req.params;
-    const cancelledPayment = await paymentService.cancelPayment(id);
-    res.status(200).json(new ApiResponse(200, "Payment cancelled", cancelledPayment));
+  confirmPayment: async (req, res) => {
+    const { paymentId } = req.params;
+    const confirmedPayment = await paymentService.confirmPayment(paymentId);
+    res.status(200).json(new ApiResponse(200, "Payment confirmed", confirmedPayment));
   },
+
+  // cancelPayment: async (req, res) => {
+  //   const { id } = req.params;
+  //   const cancelledPayment = await paymentService.cancelPayment(id);
+  //   res.status(200).json(new ApiResponse(200, "Payment cancelled", cancelledPayment));
+  // },
 
 };
 export {

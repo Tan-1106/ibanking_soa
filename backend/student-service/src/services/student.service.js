@@ -140,7 +140,7 @@ const studentService = {
       throw new ApiError(400, "Invalid request", " studentFeeIds must be a non-empty array ");
     }
 
-    const studentFees = await StudentFee.findAll({ where: { id: studentFeeIds, status: "unpaid" } });
+    const studentFees = await StudentFee.findAll({ where: { id: studentFeeIds, status: "processing" } });
     if (studentFees.length !== studentFeeIds.length) {
       throw new ApiError(404, "Not Found", "Some student fees not found or already paid ");
     }
@@ -152,8 +152,10 @@ const studentService = {
       await studentFee.save();
     }
 
-    return studentFees;
+    return true;
   },
+
+
 
 };
 export {

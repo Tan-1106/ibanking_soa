@@ -6,24 +6,13 @@ import {
 
 import authMiddleware from '../middlewares/auth.middleware.js';
 const router = express.Router();
-/**
- * Payment 
- */
-// Create payment (user clicks Continue -> create pending payment + OTP send)
 router.post("/",
   authMiddleware,
   paymentController.createPayment
 );
-
-
-// Get payment status
-router.get("/:paymentId", authMiddleware, paymentController.getPayment);
-
-// List payments (user or admin)
+router.get("/:paymentId", paymentController.getPayment);
 router.get("/", authMiddleware, paymentController.listPayments);
-
-// Cancel pending payment
-router.post("/:paymentId/cancel", authMiddleware, paymentController.cancelPayment);
+router.get("/confirm/:paymentId", paymentController.confirmPayment);
 
 
 export default router;

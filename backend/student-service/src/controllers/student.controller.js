@@ -94,8 +94,8 @@ const studentController = {
   // POST /students/fees/mark-paid
   markFeesPaid: async (req, res) => {
     const { paymentRef, studentFeeIds } = req.body;
-    const updated = await studentService.markFeesPaid(studentFeeIds, paymentRef);
-    res.json(new ApiResponse(200, "Fees marked as paid successfully", updated));
+    const result = await studentService.markFeesPaid(studentFeeIds, paymentRef);
+    res.json(new ApiResponse(200, "Fees marked as paid successfully", result));
   }
 };
 export {

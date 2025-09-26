@@ -8,11 +8,14 @@ const Payment = sequelize.define("Payment", {
   totalAmount: { type: DataTypes.DECIMAL(15, 2), allowNull: false },
   status: { type: DataTypes.ENUM("pending", "completed", "failed"), allowNull: false, defaultValue: "pending" },
   expiresAt: { type: DataTypes.DATE, allowNull: false },
+  paidAt: { type: DataTypes.DATE, allowNull: true },
 }, {
   tableName: "payments",
   timestamps: true,
   indexes: [
-    { fields: ["paymentRef"], unique: true },
+    {
+      fields: ["paymentRef"], unique: true
+    },
   ]
 });
 
