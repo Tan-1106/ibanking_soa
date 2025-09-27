@@ -85,7 +85,9 @@ class AppViewModel : ViewModel() {
                 }
                 saveCredentials(username, password, context)
 
-                navController.navigate(Screens.TuitionFee.name)
+                navController.navigate(Screens.TuitionFee.name) {
+                    popUpTo(Screens.Login.name) {  inclusive = true }
+                }
             } else {
                 errorMessage = "Invalid username or password"
             }
@@ -167,7 +169,7 @@ class AppViewModel : ViewModel() {
         var success = false
 
         if (success) {
-            navController.navigate(Screens.Otp.name)
+            navController.navigate(Screens.PaymentDetails.name)
         } else {
             // TODO: ERROR MESSAGE FOR TOAST
             Toast.makeText(context, "", Toast.LENGTH_SHORT).show()
@@ -218,7 +220,7 @@ class AppViewModel : ViewModel() {
     ) {
         _uiState.update {
             it.copy(
-                selectedPayment = selectedPayment
+                selectedHistoryPayment = selectedPayment
             )
         }
 

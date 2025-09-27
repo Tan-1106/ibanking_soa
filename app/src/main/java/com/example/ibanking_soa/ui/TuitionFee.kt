@@ -29,7 +29,6 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -52,6 +51,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.ibanking_soa.R
+import com.example.ibanking_soa.Screens
 import com.example.ibanking_soa.ui.theme.AcceptColor
 import com.example.ibanking_soa.ui.theme.AlertColor
 import com.example.ibanking_soa.ui.theme.BackgroundColor
@@ -95,7 +95,9 @@ fun TuitionFeeScreen(
                         contentDescription = null,
                         modifier = Modifier
                             .clickable {
-                                // TODO: LOG OUT
+                                navController.navigate(Screens.Login.name) {
+                                    popUpTo(Screens.TuitionFee.name) { inclusive = true }
+                                }
                             }
                     )
                 },
@@ -231,11 +233,6 @@ fun TuitionFeeScreen(
                     lineText = R.string.TuitionFee_Amount,
                     content = "${appViewModel.formatCurrency(appUiState.tuitionFee.amount)} VND",
                     contentColor = AlertColor,
-                    modifier = Modifier.fillMaxWidth()
-                )
-                TuitionInfLine(
-                    lineText = R.string.TuitionFee_Content,
-                    content = appUiState.tuitionFee.content,
                     modifier = Modifier.fillMaxWidth()
                 )
             }

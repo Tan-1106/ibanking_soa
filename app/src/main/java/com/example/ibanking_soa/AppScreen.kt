@@ -7,14 +7,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.ibanking_soa.ui.LoginScreen
-import com.example.ibanking_soa.ui.PaymentDetails
+import com.example.ibanking_soa.ui.PaymentHistoryDetails
 import com.example.ibanking_soa.ui.PaymentHistory
-import com.example.ibanking_soa.ui.PaymentInformationScreen
+import com.example.ibanking_soa.ui.PaymentDetails
 import com.example.ibanking_soa.ui.TuitionFeeScreen
 import com.example.ibanking_soa.viewModel.AppViewModel
 
 enum class Screens {
-    Login, TuitionFee, Otp,
+    Login, TuitionFee, PaymentDetails,
     HistoryList, HistoryDetails
 }
 
@@ -41,8 +41,8 @@ fun AppScreen(
             )
         }
 
-        composable(route = Screens.Otp.name) {
-            PaymentInformationScreen(
+        composable(route = Screens.PaymentDetails.name) {
+            PaymentDetails(
                 appViewModel = appViewModel,
                 navController = navController
             )
@@ -56,7 +56,7 @@ fun AppScreen(
         }
 
         composable(route = Screens.HistoryDetails.name) {
-            PaymentDetails(
+            PaymentHistoryDetails(
                 appViewModel = appViewModel,
                 navController = navController
             )

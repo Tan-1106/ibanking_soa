@@ -21,6 +21,7 @@ class RetrofitInstance {
         retrofit.create(TuitionApi::class.java)
     }
 }
+
 class UserRepository() {
     private val api = RetrofitInstance().userApi
     suspend fun getUsers() : ListUserResponse{
@@ -50,6 +51,7 @@ class UserRepository() {
         }
     }
 }
+
 class  TuitionRepository() {
     private val api = RetrofitInstance().tuitionApi
     suspend fun getTuitionByStudentId(sID: String) : TuitionFee?{
@@ -62,4 +64,5 @@ class  TuitionRepository() {
         }
     }
 }
+
 

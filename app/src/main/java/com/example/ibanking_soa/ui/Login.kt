@@ -163,7 +163,6 @@ fun LoginScreen(
                 modifier = Modifier.width(300.dp)
             )
             if (appViewModel.errorMessage != "") {
-
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Start,
@@ -176,7 +175,6 @@ fun LoginScreen(
                         style = CustomTypography.bodySmall,
                         color = AlertColor
                     )
-
                 }
             }
         }

@@ -8,38 +8,47 @@ data class AppUiState(
     val tuitionFee: TuitionFee = TuitionFee(),
     val payment: Payment = Payment(),
     val paymentHistory: List<PaymentHistoryItem> = testPaymentHistory,
-    val selectedPayment: PaymentHistoryItem = PaymentHistoryItem(),
+    val selectedHistoryPayment: PaymentHistoryItem = PaymentHistoryItem(),
     val errorMessage:String = ""
 )
 
 data class User(
-    val userId: String = "",
-    val username: String = "",
-    val fullName: String = "",
-    val phoneNumber: String = "",
-    val email: String = "",
+    val userId: String = "userId",
+    val username: String = "username",
+    val fullName: String = "fullName",
+    val phoneNumber: String = "phoneNumber",
+    val email: String = "email",
     val balance: BigDecimal = BigDecimal.ZERO
 )
 
 data class TuitionFee(
-    val studentId: String = "",
-    val studentFullName: String = "",
+    val studentId: String = "studentId",
+    val studentFullName: String = "studentFullName",
     val amount: BigDecimal = BigDecimal.ZERO,
-    val content: String = "abcd"
+    val content: String = "content"
 )
 
 data class Payment(
-    val referenceCode: String = "abcd",
-    val beneficiaryAccount: String = "abcd",
+    val referenceCode: String = "RefCode",
+    val beneficiaryAccount: String = "BeneficiaryAccount",
     val transferFee: BigDecimal = BigDecimal.ZERO,
     val total: BigDecimal = BigDecimal.ZERO
 )
 
 data class PaymentHistoryItem(
+    val status: String = PaymentHistoryStatus.SUCCESS.status,
     val tuitionFee: TuitionFee = TuitionFee(),
     val payment: Payment = Payment(),
     val date: LocalDateTime = LocalDateTime.now()
 )
+
+enum class PaymentHistoryStatus(
+    val status: String
+) {
+    PENDING("Pending"),
+    SUCCESS("Success"),
+    FAILED("Failed")
+}
 
 val testPaymentHistory: List<PaymentHistoryItem> = listOf(
     PaymentHistoryItem(
