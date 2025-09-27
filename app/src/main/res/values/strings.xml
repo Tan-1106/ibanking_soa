@@ -51,4 +51,10 @@
     <string name="PaymentDetails_BeneficiaryAccount">Beneficiary account</string>
     <string name="PaymentDetails_Amount">Payment amount</string>
     <string name="PaymentDetails_Content">Content</string>
+
+    <!--  Custom Dialog  -->
+    <string name="CustomDialog_Logout">Log out</string>
+    <string name="CustomDialog_CancelButton">Cancel</string>
+    <string name="CustomDialog_YesButton">Yes</string>
+    <string name="CustomDialog_LogoutText">Are you sure you want to log out?</string>
 </resources>

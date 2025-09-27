@@ -35,6 +35,9 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -71,6 +74,8 @@ fun TuitionFeeScreen(
     val context = LocalContext.current
     val appUiState by appViewModel.uiState.collectAsState()
 
+    var logoutDialogVisible by remember { mutableStateOf(false) }
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -94,11 +99,7 @@ fun TuitionFeeScreen(
                         imageVector = Icons.AutoMirrored.Filled.ExitToApp,
                         contentDescription = null,
                         modifier = Modifier
-                            .clickable {
-                                navController.navigate(Screens.Login.name) {
-                                    popUpTo(Screens.TuitionFee.name) { inclusive = true }
-                                }
-                            }
+                            .clickable { logoutDialogVisible = true }
                     )
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -293,6 +294,33 @@ fun TuitionFeeScreen(
                         style = CustomTypography.bodyLarge,
                     )
                 }
+            }
+            if (logoutDialogVisible) {
+                CustomDialog(
+                    title = stringResource(R.string.CustomDialog_Logout),
+                    onDismiss = { logoutDialogVisible = false },
+                    onConfirm = {
+                        navController.navigate(Screens.Login.name) {
+                            popUpTo(Screens.TuitionFee.name) { inclusive = true }
+                        }
+                    },
+                    confirmText = stringResource(R.string.CustomDialog_YesButton),
+                    content = {
+                        Column(
+                            horizontalAlignment = Alignment.Start,
+                            verticalArrangement = Arrangement.Top,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 20.dp, horizontal = 5.dp)
+                        ) {
+                            Text(
+                                text = stringResource(R.string.CustomDialog_LogoutText),
+                                style = CustomTypography.bodyMedium,
+                                color = TextColor
+                            )
+                        }
+                    }
+                )
             }
         }
     }
