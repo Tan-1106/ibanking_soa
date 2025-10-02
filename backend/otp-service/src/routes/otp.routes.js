@@ -4,6 +4,6 @@ import authMiddleware from '../middlewares/auth.middleware.js';
 const router = express.Router();
 
 router.post("/send", authMiddleware, otpController.sendPaymentOTP);
-router.post("/verify", otpController.verifyOtp);
+router.post("/verify", authMiddleware, otpController.verifyOtp);
 
 export default router;

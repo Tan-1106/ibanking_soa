@@ -19,5 +19,5 @@ router.delete("/:id", authMiddleware, userController.deleteUser);
 
 router.post("/deduct-balance/:userId", authMiddleware, userController.deductBalance);
 router.post("/refund/:userId", authMiddleware, userController.refundBalance);
-router.post("/confirm-payment", userController.confirmPayment);
+router.post("/confirm-payment", authMiddleware, userController.confirmPayment);
 export default router;

@@ -16,8 +16,11 @@ const paymentService = {
     const studentFeeIds = studentFees.map(f => f.id);
     apiEndpoint = `${STUDENT_SERVICE_URL}/students/fees/processing`;
     await fetchApi(apiEndpoint, { method: "POST", body: { studentFeeIds } });
+    apiEndpoint = `${STUDENT_SERVICE_URL}/students/${studentId}`;
+    response = await fetchApi(apiEndpoint, { method: "GET" });
+    const student = response.data;
     const paymentRef = `PAY-${v4()}`;
-    const payment = await Payment.create({ userId, paymentRef, totalAmount, expiresAt: new Date(Date.now() + EXPIRED_PAYMENT_TIMEOUT) });
+    const payment = await Payment.create({ userId, studentFullName: student.fullName, studentId, paymentRef, totalAmount, expiresAt: new Date(Date.now() + EXPIRED_PAYMENT_TIMEOUT) });
     setInterval(async () => {
       const p = await Payment.findByPk(payment.id);
       if (p.status === "pending") {
@@ -62,7 +65,7 @@ const paymentService = {
       }
       payment.status = "completed";
       payment.paidAt = new Date();
-      await Payment.update({ status: "completed", paidAt: new Date() }, { where: { id: paymentId } });
+      payment.save();
       return payment;
     } catch (error) {
       if (error instanceof ApiError) {
@@ -71,5 +74,9 @@ const paymentService = {
       throw new ApiError(500, "Internal Server Error", error.message, error.stack);
     }
   },
-};
+  checkInTransaction: async (userId, studentId) => {
+    const payment = await Payment.findOne({ where: { userId, studentId, status: "pending" } });
+    return payment;
+  }
+}
 export default paymentService;

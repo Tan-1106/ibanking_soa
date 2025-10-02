@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.OutlinedTextField
@@ -30,6 +31,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -47,6 +52,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.ibanking_soa.R
+import com.example.ibanking_soa.data.utils.ApiResult
 import com.example.ibanking_soa.ui.theme.AlertColor
 import com.example.ibanking_soa.ui.theme.BackgroundColor
 import com.example.ibanking_soa.ui.theme.CustomTypography
@@ -64,6 +70,7 @@ fun LoginScreen(
 ) {
     // Variables
     val context = LocalContext.current
+    val appUiState by appViewModel.uiState.collectAsState()
 
     LaunchedEffect(Unit) {
         appViewModel.loadUsernameAndPassword(context)
@@ -149,19 +156,6 @@ fun LoginScreen(
                     )
                 }
             }
-            CustomTextButton(
-                buttonText = R.string.LoginScreen_ButtonText,
-                contentColor = TextColor,
-                containerColor = BackgroundColor,
-                borderColor = SecondaryColor,
-                onClick = {
-                    appViewModel.login(
-                        context = context,
-                        navController = navController
-                    )
-                },
-                modifier = Modifier.width(300.dp)
-            )
             if (appViewModel.errorMessage != "") {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -177,6 +171,26 @@ fun LoginScreen(
                     )
                 }
             }
+            if (!appUiState.isLoading) {
+
+                CustomTextButton(
+                    buttonText = R.string.LoginScreen_ButtonText,
+                    contentColor = TextColor,
+                    containerColor = BackgroundColor,
+                    borderColor = SecondaryColor,
+                    onClick = {
+                        appViewModel.login(
+                            context = context,
+                            navController = navController
+                        )
+                    },
+                    modifier = Modifier.width(300.dp)
+                )
+            } else {
+                CircularProgressIndicator()
+            }
+
+
         }
     }
 }

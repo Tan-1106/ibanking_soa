@@ -31,9 +31,12 @@ const userService = {
       throw new ApiError(401, "Login failed", "Invalid email or password");
     }
     const token = jwt.sign(
-      { id: user.id, email: user.email },
+      {
+        id: user.id,
+        email: user.email
+      },
       process.env.JWT_SECRET,
-      { expiresIn: '1h' }
+      { expiresIn: '1d' }
     );
     return { token, user: user };
   },
@@ -95,28 +98,34 @@ const userService = {
     return user;
   },
 
-  confirmPayment: async (userId, otp, paymentId) => {
+  confirmPayment: async (userId, otp, paymentId, token) => {
     const user = await User.findByPk(userId);
     if (!user)
       throw new ApiError(404, "User not found", "User with ID " + userId + " does not exist");
-    let apiEndpoint = `${OTP_SERVICE_URL}/otps/verify`;
-    let response = await fetchApi(apiEndpoint, {
+
+    let apiEndpoint = `${PAYMENT_SERVICE_URL}/payments/${paymentId}`;
+    let response = await fetchApi(apiEndpoint, { method: "GET" });
+    if (!response.success) {
+      throw new ApiError(response.status, response.title, response.message, response.stack);
+    }
+    const payment = response.data;
+    apiEndpoint = `${OTP_SERVICE_URL}/otps/verify`;
+    response = await fetchApi(apiEndpoint, {
       method: "POST",
       body: {
         userId,
         paymentId,
         code: otp
+      },
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
       }
     })
     if (!response.success) {
       throw new ApiError(response.status, response.title, response.message, response.stack);
     }
-    apiEndpoint = `${PAYMENT_SERVICE_URL}/payments/${paymentId}`;
-    response = await fetchApi(apiEndpoint, { method: "GET" });
-    if (!response.success) {
-      throw new ApiError(response.status, response.title, response.message, response.stack);
-    }
-    const payment = response.data;
+
     if (user.balance < payment.totalAmount) {
       throw new ApiError(400, "Insufficient balance", "User");
     }
@@ -127,7 +136,7 @@ const userService = {
       throw new ApiError(response.status, response.title, response.message, response.stack);
     }
     return response.data;
-  }
+  },
 };
 export {
   userService

@@ -5,7 +5,7 @@ const validate = (schema) => async (req, res, next) => {
     await schema.validate(req.body, { abortEarly: false });
     next();
   } catch (err) {
-    throw new ApiError(400, "Validation error", "Validation error: " + err.errors.join(", "));
+    throw new ApiError(400, "Validation error", err.errors.join(", "));
   }
 };
 

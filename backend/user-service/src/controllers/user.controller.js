@@ -80,9 +80,18 @@ const userController = {
     const updatedUser = await userService.refundBalance(userId, amount);
     res.status(200).json(new ApiResponse(200, "Balance refunded successfully", updatedUser));
   },
+
   confirmPayment: async (req, res) => {
-    const { userId, otp, paymentId } = req.body;
-    const result = await userService.confirmPayment(userId, otp, paymentId);
+    const { otp, paymentId } = req.body;
+    const userId = req.user.id;
+    if (!userId) {
+      throw new ApiError(401, "Unauthorized", " User ID not found in token ");
+    }
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) {
+      throw new ApiError(401, "Unauthorized", "No token provided");
+    }
+    const result = await userService.confirmPayment(userId, otp, paymentId, token);
     res.status(200).json(new ApiResponse(200, "Payment confirmed successfully", result));
   }
 };

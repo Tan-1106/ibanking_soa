@@ -11,12 +11,6 @@ const PAYMENT_SERVICE_URL = process.env.PAYMENT_SERVICE_URL || "http://payment-s
 const otpService = {
 
   sendPaymentOTP: async (userId, paymentId, token) => {
-    const code = crypto.randomInt(100000, 999999).toString();
-    const expiresAt = new Date(Date.now() + 60 * 1000);
-    const otp = await OTP.create({ userId, code, paymentId, expiresAt });
-    if (!otp) {
-      throw new ApiError(500, "Failed to create OTP", "Database error while creating OTP");
-    }
     let apiEndpoint = `${USER_SERVICE_URL}/users/me`;
     const response = await fetchApi(apiEndpoint, {
       headers: { Authorization: `Bearer ${token}` }
@@ -25,6 +19,10 @@ const otpService = {
     if (!user) {
       throw new ApiError(404, "User not found", " User with ID " + userId + " does not exist");
     }
+    if (user.id !== userId) {
+      throw new ApiError(403, "Forbidden", " You are not authorized to send OTP for this user");
+    }
+
     apiEndpoint = `${PAYMENT_SERVICE_URL}/payments/${paymentId}`;
     const paymentResponse = await fetchApi(apiEndpoint, {
       headers: { Authorization: `Bearer ${token}` }
@@ -36,6 +34,14 @@ const otpService = {
     if (payment.status !== "pending") {
       throw new ApiError(400, "Invalid Payment Status", " OTP can only be sent for pending payments");
     }
+
+    const code = crypto.randomInt(100000, 999999).toString();
+    const expiresAt = new Date(Date.now() + 60 * 1000);
+    const otp = await OTP.create({ userId, code, paymentId, expiresAt });
+    if (!otp) {
+      throw new ApiError(500, "Failed to create OTP", "Database error while creating OTP");
+    }
+
     await sendMail({
       to: user.email,
       subject: "Your Payment OTP Code",

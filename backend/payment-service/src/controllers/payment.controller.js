@@ -45,14 +45,22 @@ const paymentController = {
     const confirmedPayment = await paymentService.confirmPayment(paymentId);
     res.status(200).json(new ApiResponse(200, "Payment confirmed", confirmedPayment));
   },
-
-  // cancelPayment: async (req, res) => {
-  //   const { id } = req.params;
-  //   const cancelledPayment = await paymentService.cancelPayment(id);
-  //   res.status(200).json(new ApiResponse(200, "Payment cancelled", cancelledPayment));
-  // },
-
-};
+  isInTransaction: async (req, res) => {
+    const { studentId } = req.params;
+    if (!studentId) {
+      throw new ApiError(400, "Bad Request", " studentId is required to check transaction status ");
+    }
+    const userId = req.user.id;
+    if (!userId) {
+      throw new ApiError(401, "Unauthorized", " User ID not found in token ");
+    }
+    const payment = await paymentService.checkInTransaction(userId, studentId);
+    if (!payment) {
+      res.status(200).json(new ApiResponse(200, "No pending payment transaction", null));
+    }
+    res.status(200).json(new ApiResponse(200, "Payment transaction status", payment));
+  }
+}
 export {
   paymentController
 }

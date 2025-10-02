@@ -2,6 +2,7 @@ import Student from "../models/student.model.js";
 import Fee from "../models/fee.model.js";
 import StudentFee from "../models/studentFee.model.js";
 import ApiError from "../utils/ApiError.js";
+import { Op } from "sequelize";
 const EXPIRED_PAYMENT_TIMEOUT = 5 * 60 * 1000;
 const studentService = {
 
@@ -41,7 +42,14 @@ const studentService = {
     }
 
     const studentFees = await StudentFee.findAll({
-      where: { studentId: student.id, status: "unpaid" },
+      where: {
+        studentId: student.id,
+        [Op.or]: [
+          { status: "unpaid" },
+          { status: "processing" }
+        ]
+      },
+
       include: [
         {
           model: Fee,
@@ -56,7 +64,7 @@ const studentService = {
     );
 
     return {
-      isPayable: totalPending > 0,
+      isPayable: studentFees[0].status !== "processing",
       studentId: student.id,
       fullName: student.fullName,
       totalPending,

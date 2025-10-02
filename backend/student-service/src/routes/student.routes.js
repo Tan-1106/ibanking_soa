@@ -7,11 +7,6 @@ import { studentController } from "../controllers/student.controller.js";
 
 const router = express.Router();
 
-/**
- * Student CRUD
- */
-
-
 router.post("/", validate(createStudentSchema), studentController.createStudent);
 router.get("/:id", studentController.getStudentByID);
 router.put("/:id", studentController.updateStudent);
@@ -22,7 +17,7 @@ router.get("/fees/:studentId", studentController.getStudentFeeByStudentId);
 router.get("/fees/:studentFeeId", studentController.getStudentFeeById);
 
 router.post("/fees/processing", studentController.markProcessingStudentFees);
-router.post("/fees/mark-paid", studentController.markFeesPaid); // gọi route này từ payment service để đánh dấu phí đã được thanh toán
+router.post("/fees/mark-paid", studentController.markFeesPaid);
 router.post("/fees/:studentId", validate(payload), studentController.assignFeesToStudent);
 router.put("/fees/:studentFeeId", studentController.updateStudentFee);
 

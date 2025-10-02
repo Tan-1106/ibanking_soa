@@ -1,5 +1,6 @@
 package com.example.ibanking_soa.ui
 
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -51,7 +52,7 @@ import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PaymentHistoryDetails(
+fun PaymentSuccessful(
     appViewModel: AppViewModel,
     navController: NavHostController
 ) {
@@ -63,7 +64,7 @@ fun PaymentHistoryDetails(
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        text = stringResource(R.string.PaymentHistory),
+                        text = stringResource(R.string.PaymentSuccessful),
                         style = CustomTypography.titleLarge
                     )
                 },
@@ -172,7 +173,7 @@ fun PaymentHistoryDetails(
     showSystemUi = true
 )
 @Composable
-fun PaymentHistoryDetailsPreview() {
+fun PaymentSuccessfulPreview() {
     val fakeAppViewModel: AppViewModel = viewModel()
     val fakeNavController: NavHostController = rememberNavController()
 

@@ -1,15 +1,20 @@
 package com.example.ibanking_soa.uiState
 
+import com.example.ibanking_soa.data.dto.LoginResponse
+import com.example.ibanking_soa.data.dto.TuitionResponse
+import com.example.ibanking_soa.data.utils.ApiResult
+import org.w3c.dom.Attr
 import java.math.BigDecimal
 import java.time.LocalDateTime
 
 data class AppUiState(
+    var isLoading: Boolean = false,
+    var payable: Boolean = false,
     val user: User = User(),
-    val tuitionFee: TuitionFee = TuitionFee(),
+    val tuitionFee: TuitionFee? = null,
     val payment: Payment = Payment(),
     val paymentHistory: List<PaymentHistoryItem> = testPaymentHistory,
     val selectedHistoryPayment: PaymentHistoryItem = PaymentHistoryItem(),
-    val errorMessage:String = ""
 )
 
 data class User(
@@ -25,14 +30,21 @@ data class TuitionFee(
     val studentId: String = "studentId",
     val studentFullName: String = "studentFullName",
     val amount: BigDecimal = BigDecimal.ZERO,
-    val content: String = "content"
 )
 
+
 data class Payment(
-    val referenceCode: String = "RefCode",
-    val beneficiaryAccount: String = "BeneficiaryAccount",
-    val transferFee: BigDecimal = BigDecimal.ZERO,
-    val total: BigDecimal = BigDecimal.ZERO
+    val createdAt: String = "2025-09-30T11:58:46.000Z",
+    val expiresAt: String = "2025-09-30T11:58:46.000Z",
+    val id: Int = -1,
+    val paidAt: String = "2025-09-30T11:58:46.000Z",
+    val paymentRef: String? = null,
+    val status: String = "pending",
+    val studentId: String = "52200076",
+    val studentFullName: String="studentFullName",
+    val totalAmount: BigDecimal = BigDecimal(0),
+    val updatedAt: String = "2025-09-30T11:58:46.000Z",
+    val userId: Int = -1
 )
 
 data class PaymentHistoryItem(
@@ -52,30 +64,15 @@ enum class PaymentHistoryStatus(
 
 val testPaymentHistory: List<PaymentHistoryItem> = listOf(
     PaymentHistoryItem(
-        payment = Payment(
-            referenceCode = "PAY20250901001",
-            beneficiaryAccount = "9876543210",
-            transferFee = BigDecimal(0),
-            total = BigDecimal(5_000_000)
-        ),
+        payment = Payment(),
         date = LocalDateTime.of(2025, 9, 1, 14, 30, 0)
     ),
     PaymentHistoryItem(
-        payment = Payment(
-            referenceCode = "PAY20250815002",
-            beneficiaryAccount = "9876543210",
-            transferFee = BigDecimal(0),
-            total = BigDecimal(10_000_000)
-        ),
+        payment = Payment(),
         date = LocalDateTime.of(2025, 8, 15, 9, 0, 0)
     ),
     PaymentHistoryItem(
-        payment = Payment(
-            referenceCode = "PAY20250720003",
-            beneficiaryAccount = "9876543210",
-            transferFee = BigDecimal(0),
-            total = BigDecimal(3_000_000)
-        ),
+        payment = Payment(),
         date = LocalDateTime.of(2025, 7, 20, 19, 45, 0)
     )
 )

@@ -3,17 +3,19 @@ class ApiError extends Error {
         super(message);
         this.title = title;
         this.status = status;
+        this.service = "USER-SERVICE";
         if (stack) {
             this.stack = stack + this.stack;
         }
     }
     json() {
         return {
+            service: this.service,
             success: false,
             title: this.title,
             status: this.status,
             message: this.message,
-            stack: this.stack
+            stack: this.stack,
         }
     }
 }

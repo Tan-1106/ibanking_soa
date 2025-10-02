@@ -1,6 +1,7 @@
 package com.example.ibanking_soa.viewModel
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.getValue
@@ -13,11 +14,17 @@ import androidx.navigation.NavHostController
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import com.example.ibanking_soa.Screens
-import com.example.ibanking_soa.repository.UserRepository
-import com.example.ibanking_soa.dto.LoginRequest
-import com.example.ibanking_soa.dto.LoginResponse
+import com.example.ibanking_soa.data.dto.ConfirmPaymentRequest
+import com.example.ibanking_soa.data.dto.LoginRequest
+import com.example.ibanking_soa.data.repository.OtpRepository
+import com.example.ibanking_soa.data.repository.PaymentRepository
+import com.example.ibanking_soa.data.repository.TuitionRepository
+import com.example.ibanking_soa.data.repository.UserRepository
+import com.example.ibanking_soa.data.utils.ApiResult
+import com.example.ibanking_soa.ui.theme.token
 import com.example.ibanking_soa.uiState.AppUiState
 import com.example.ibanking_soa.uiState.PaymentHistoryItem
+import com.example.ibanking_soa.uiState.TuitionFee
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -30,6 +37,9 @@ class AppViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(AppUiState())
     val uiState: StateFlow<AppUiState> = _uiState.asStateFlow()
     private val userRepository = UserRepository()
+    private val tuitionRepository = TuitionRepository()
+    private val paymentRepository = PaymentRepository()
+    private val otpRepository = OtpRepository()
 
     // LOGIN SCREEN
     var usernameValue by mutableStateOf("")
@@ -42,6 +52,18 @@ class AppViewModel : ViewModel() {
         private set
     var errorMessage by mutableStateOf("")
         private set
+
+    private fun getSharedPrefs(context: Context): SharedPreferences {
+        val masterKey = MasterKey.Builder(context)
+            .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+            .build()
+        val sharedPrefs = EncryptedSharedPreferences.create(
+            context, "soa_midterm_credentials", masterKey,
+            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+        )
+        return sharedPrefs
+    }
 
     fun clearUsername() {
         usernameValue = ""
@@ -71,25 +93,43 @@ class AppViewModel : ViewModel() {
         context: Context,
         navController: NavHostController
     ) {
+        _uiState.update {
+            it.copy(isLoading = true)
+        }
         errorMessage = ""
         val username = usernameValue
         val password = passwordValue
         val loginRequest = LoginRequest(username, password)
         viewModelScope.launch {
-            val loginResponse: LoginResponse? = userRepository.login(loginRequest)
-            Log.d("Login", "Login Response: $loginResponse")
-            if (loginResponse != null) {
+            try {
+                val apiResult = userRepository.login(loginRequest)
+                if (apiResult is ApiResult.Error) {
+                    _uiState.update {
+                        it.copy(isLoading = false)
+                    }
+                    errorMessage = apiResult.message
+                    return@launch
+                }
+                val loginResponse = (apiResult as ApiResult.Success).data
                 val userData = loginResponse.user
                 _uiState.update {
-                    it.copy(user = userData)
+                    it.copy(
+                        user = userData,
+                        isLoading = false
+                    )
                 }
                 saveCredentials(username, password, context)
+                getSharedPrefs(context).edit {
+                    putString("token", loginResponse.token)
+                }
+                Log.d("err", "Token: ${getSharedPrefs(context).getString("token", "")}")
+                Log.d("Login", "Login Response: $loginResponse")
 
                 navController.navigate(Screens.TuitionFee.name) {
-                    popUpTo(Screens.Login.name) {  inclusive = true }
+                    popUpTo(Screens.Login.name) { inclusive = true }
                 }
-            } else {
-                errorMessage = "Invalid username or password"
+            } catch (e: Exception) {
+                errorMessage = e.message ?: ""
             }
         }
 
@@ -109,16 +149,9 @@ class AppViewModel : ViewModel() {
         password: String,
         context: Context
     ) {
-        val masterKey = MasterKey.Builder(context)
-            .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-            .build()
-        val sharedPrefs = EncryptedSharedPreferences.create(
-            context, "soa_midterm_credentials", masterKey,
-            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-        )
 
-        sharedPrefs.edit {
+
+        getSharedPrefs(context).edit {
             putString("username", identifier)
             putString("password", password)
         }
@@ -126,16 +159,7 @@ class AppViewModel : ViewModel() {
 
     private fun loadSavedCredentials(context: Context): Pair<String, String> {
         return try {
-            val masterKey = MasterKey.Builder(context)
-                .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-                .build()
-
-            val sharedPrefs = EncryptedSharedPreferences.create(
-                context, "soa_midterm_credentials", masterKey,
-                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-            )
-
+            val sharedPrefs = getSharedPrefs(context)
             val identifier = sharedPrefs.getString("username", "") ?: ""
             val password = sharedPrefs.getString("password", "") ?: ""
             Pair(identifier, password)
@@ -152,6 +176,88 @@ class AppViewModel : ViewModel() {
         studentIdValue = ""
     }
 
+    fun onSearchStudentId(
+        navController: NavHostController
+
+    ) {
+        _uiState.update {
+            it.copy(isLoading = true)
+        }
+        viewModelScope.launch {
+            val apiResultPayment = paymentRepository.isInTransaction(studentIdValue)
+            when (apiResultPayment) {
+                is ApiResult.Success -> {
+                    if (apiResultPayment.data == null) {
+                        val apiResultTuition =
+                            tuitionRepository.getTuitionByStudentId(studentIdValue)
+                        when (apiResultTuition) {
+                            is ApiResult.Success -> {
+                                if (apiResultTuition.data.totalPending> BigDecimal(0)) {
+
+                                    _uiState.update {
+                                        it.copy(
+                                            isLoading = false,
+                                            payable = apiResultTuition.data.isPayable,
+                                            tuitionFee = TuitionFee(
+                                                studentId = apiResultTuition.data.studentId,
+                                                studentFullName = apiResultTuition.data.fullName,
+                                                amount = apiResultTuition.data.totalPending
+                                            ),
+                                        )
+                                    }
+                                }
+                                else{
+                                    _uiState.update {
+                                        it.copy(
+                                            isLoading = false,
+                                            payable = false,
+
+                                        )
+                                    }
+                                    errorMessage = "No tuition fee due for this student ID"
+                                }
+                            }
+
+                            is ApiResult.Error -> {
+                                _uiState.update {
+                                    it.copy(
+                                        isLoading = false,
+                                    )
+                                }
+                                errorMessage = apiResultTuition.message
+                            }
+                        }
+
+
+                    } else {
+                        _uiState.update {
+                            it.copy(
+                                isLoading = false,
+                                payable = false,
+                                payment = apiResultPayment.data
+                            )
+                        }
+                        navController.navigate(Screens.PaymentDetails.name)
+
+                    }
+
+                }
+
+                is ApiResult.Error -> {
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                        )
+                    }
+                    errorMessage = apiResultPayment.message
+
+                }
+
+            }
+        }
+        Log.d("err", errorMessage)
+    }
+
     fun onStudentIdChange(newValue: String) {
         studentIdValue = newValue
     }
@@ -165,31 +271,71 @@ class AppViewModel : ViewModel() {
         context: Context,
         navController: NavHostController
     ) {
-        // TODO: EVENT & BACKEND HANDLING
-        var success = false
+        _uiState.update {
+            it.copy(isLoading = true)
+        }
+        viewModelScope.launch {
+            val apiResult = paymentRepository.createPayment(studentIdValue)
+            when (apiResult) {
+                is ApiResult.Success -> {
+                    if (apiResult.data != null) {
+                        _uiState.update {
+                            it.copy(
+                                isLoading = false,
+                                payment = apiResult.data
+                            )
+                        }
+                        navController.navigate(Screens.PaymentDetails.name)
+                    } else {
+                        _uiState.update {
+                            it.copy(
+                                isLoading = false,
+                            )
+                        }
+                        Toast.makeText(context, "Failed to create payment", Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                }
 
-        if (success) {
-            navController.navigate(Screens.PaymentDetails.name)
-        } else {
-            // TODO: ERROR MESSAGE FOR TOAST
-            Toast.makeText(context, "", Toast.LENGTH_SHORT).show()
+                is ApiResult.Error -> {
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                        )
+                    }
+                    Toast.makeText(context, apiResult.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+
         }
     }
 
     // OTP
     var isOtpBoxVisible by mutableStateOf(false)
 
-    fun verifyBeforeSendOTP(context: Context) {
-        // TODO: DATA VERIFY BEFORE SENDING OTP
-        var success = false
-
-        if (success) {
-            isOtpBoxVisible = true
-        } else {
-            // TODO: ERROR MESSAGE FOR TOAST
-            Toast.makeText(context, "", Toast.LENGTH_SHORT).show()
+    fun sendOTP(context: Context) {
+        _uiState.update {
+            it.copy(isLoading = true)
+        }
+        viewModelScope.launch {
+            val apiResult = otpRepository.sendOtp(_uiState.value.payment.id)
+            if (apiResult is ApiResult.Error) {
+                Toast.makeText(context, apiResult.message, Toast.LENGTH_SHORT).show()
+                return@launch
+            }
+            val isSent = (apiResult as ApiResult.Success).data
+            if (isSent) {
+                Toast.makeText(context, "OTP Sent", Toast.LENGTH_SHORT).show()
+                isOtpBoxVisible = true
+                _uiState.update {
+                    it.copy(isLoading = false)
+                }
+            } else {
+                Toast.makeText(context, "Failed to send OTP", Toast.LENGTH_SHORT).show()
+            }
         }
     }
+
 
     fun onOtpDismiss() {
         isOtpBoxVisible = false
@@ -200,8 +346,39 @@ class AppViewModel : ViewModel() {
     var otpValue by mutableStateOf("")
         private set
 
-    fun onOtpChange(newValue: String) {
+    fun onOtpChange(newValue: String, context: Context, navController: NavHostController) {
         otpValue = newValue
+        if (otpValue.length == 6) {
+            viewModelScope.launch {
+                val apiResult = userRepository.confirmPayment(
+                    ConfirmPaymentRequest(
+                        otp = otpValue,
+                        paymentId = _uiState.value.payment.id
+                    )
+                )
+                when (apiResult) {
+                    is ApiResult.Success -> {
+                        _uiState.update {
+                            it.copy(
+                                isLoading = false,
+                                payment = apiResult.data
+                            )
+                        }
+                        isOtpBoxVisible = false
+                        Toast.makeText(context, "Payment Successful", Toast.LENGTH_SHORT).show()
+                        navController.navigate(Screens.PaymentSuccessful.name)
+                    }
+
+                    is ApiResult.Error -> {
+                        Toast.makeText(context, apiResult.message, Toast.LENGTH_SHORT).show()
+                        otpValue = ""
+                        return@launch
+                    }
+                }
+
+            }
+
+        }
     }
 
     // HISTORY
@@ -226,4 +403,5 @@ class AppViewModel : ViewModel() {
 
         navController.navigate(Screens.HistoryDetails.name)
     }
+
 }

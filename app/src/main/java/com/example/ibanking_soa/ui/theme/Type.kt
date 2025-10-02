@@ -6,6 +6,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
 // Custom Typography
+val token ="Bearer "+
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJubWR0cnVvbmcxODAzMjAwNEBnbWFpbGEuY29tIiwiaWF0IjoxNzU5NDA2MDc1LCJleHAiOjE3NTk0OTI0NzV9.woVq68UNeI5yw9uZmEU1SvyclvOmScDuMJLvfdtalME"
 val CustomTypography = Typography(
     displayLarge = TextStyle(
         fontFamily = RobotoSlab,

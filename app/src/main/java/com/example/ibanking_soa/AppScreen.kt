@@ -10,12 +10,14 @@ import com.example.ibanking_soa.ui.LoginScreen
 import com.example.ibanking_soa.ui.PaymentHistoryDetails
 import com.example.ibanking_soa.ui.PaymentHistory
 import com.example.ibanking_soa.ui.PaymentDetails
+import com.example.ibanking_soa.ui.PaymentSuccessful
 import com.example.ibanking_soa.ui.TuitionFeeScreen
 import com.example.ibanking_soa.viewModel.AppViewModel
 
 enum class Screens {
     Login, TuitionFee, PaymentDetails,
-    HistoryList, HistoryDetails
+    HistoryList, HistoryDetails,
+    PaymentSuccessful
 }
 
 @Composable
@@ -43,6 +45,12 @@ fun AppScreen(
 
         composable(route = Screens.PaymentDetails.name) {
             PaymentDetails(
+                appViewModel = appViewModel,
+                navController = navController
+            )
+        }
+        composable(route = Screens.PaymentSuccessful.name) {
+            PaymentSuccessful(
                 appViewModel = appViewModel,
                 navController = navController
             )

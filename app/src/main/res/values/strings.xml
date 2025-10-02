@@ -43,6 +43,9 @@
     <string name="PaymentHistory">Payment History</string>
     <string name="PaymentHistory_TuitionPayment">Tuition payment</string>
     
+    <!-- Payment Successful -->
+    <string name="PaymentSuccessful">Payment Successfully</string>
+
     <!-- Payment Details -->
     <string name="PaymentDetails">Payment Details</string>
     <string name="PaymentDetails_Success">Successful</string>

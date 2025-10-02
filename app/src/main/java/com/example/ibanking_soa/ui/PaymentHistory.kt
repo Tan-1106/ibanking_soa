@@ -94,7 +94,7 @@ fun PaymentHistory(
             items(appUiState.paymentHistory) {
                 HistoryItem(
                     paymentDate = it.date,
-                    amount = "${appViewModel.formatCurrency(it.payment.total)} VND",
+                    amount = "${appViewModel.formatCurrency(it.payment.totalAmount)} VND",
                     onTitleClick = {
                         appViewModel.onViewPaymentDetailsClick(
                             selectedPayment = it,

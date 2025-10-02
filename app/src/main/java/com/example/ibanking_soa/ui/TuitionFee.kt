@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -26,6 +27,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -115,7 +117,8 @@ fun TuitionFeeScreen(
                     .height(1.dp)
                     .background(color = PrimaryColor)
             )
-        }
+        },
+        modifier = Modifier.systemBarsPadding(),
     ) { innerPadding ->
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -170,7 +173,7 @@ fun TuitionFeeScreen(
                     horizontalArrangement = Arrangement.Start,
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxWidth()
-                ){
+                ) {
                     CustomInformationTextField(
                         placeholder = stringResource(R.string.TuitionFee_IDPlaceHolder),
                         leadingIcon = Icons.Default.PersonSearch,
@@ -185,26 +188,34 @@ fun TuitionFeeScreen(
                             .fillMaxWidth(0.8f)
                     )
                     Spacer(modifier = Modifier.width(5.dp))
-                    Button(
-                        onClick = {
-                            // TODO: STUDENT TUITION FEE QUERY
-
-//                            navController.navigate(Screens.Otp.name)
-                        },
-                        shape = RoundedCornerShape(8.dp),
-                        elevation = ButtonDefaults.buttonElevation(4.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = PrimaryColor,
-                            contentColor = BackgroundColor
-                        ),
-                        modifier = Modifier
-                            .height(60.dp)
-                            .fillMaxWidth()
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Search,
-                            contentDescription = null
+                    if (appUiState.isLoading) {
+                        CircularProgressIndicator(
+                            color = PrimaryColor,
+                            strokeWidth = 3.dp,
+                            modifier = Modifier
+                                .size(40.dp)
                         )
+                    } else {
+                        Button(
+                            onClick = {
+                                appViewModel.onSearchStudentId(navController)
+                            },
+                            shape = RoundedCornerShape(8.dp),
+                            elevation = ButtonDefaults.buttonElevation(4.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = PrimaryColor,
+                                contentColor = BackgroundColor
+                            ),
+                            modifier = Modifier
+                                .height(60.dp)
+                                .fillMaxWidth()
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Search,
+                                contentDescription = null
+                            )
+                        }
+
                     }
                 }
             }
@@ -220,21 +231,34 @@ fun TuitionFeeScreen(
                     .fillMaxWidth()
                     .padding(vertical = 10.dp, horizontal = 20.dp)
             ) {
-                Text(
-                    text = stringResource(R.string.TuitionFee_TuitionInformation),
-                    style = CustomTypography.titleSmall
-                )
-                TuitionInfLine(
-                    lineText = R.string.TuitionFee_StudentName,
-                    content = appUiState.tuitionFee.studentFullName,
-                    modifier = Modifier.fillMaxWidth()
-                )
-                TuitionInfLine(
-                    lineText = R.string.TuitionFee_Amount,
-                    content = "${appViewModel.formatCurrency(appUiState.tuitionFee.amount)} VND",
-                    contentColor = AlertColor,
-                    modifier = Modifier.fillMaxWidth()
-                )
+                if (appUiState.tuitionFee == null) {
+                    Row (
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth()
+                    ){
+                        Text(
+                            text = "No Information Found",
+                            style = CustomTypography.titleSmall
+                        )
+                    }
+                } else {
+                    Text(
+                        text = stringResource(R.string.TuitionFee_TuitionInformation),
+                        style = CustomTypography.titleSmall
+                    )
+                    TuitionInfLine(
+                        lineText = R.string.TuitionFee_StudentName,
+                        content = appUiState.tuitionFee!!.studentFullName,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    TuitionInfLine(
+                        lineText = R.string.TuitionFee_Amount,
+                        content = "${appViewModel.formatCurrency(appUiState.tuitionFee!!.amount)} VND",
+                        contentColor = AlertColor,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
             }
             Spacer(modifier = Modifier.weight(1f))
 
@@ -253,7 +277,7 @@ fun TuitionFeeScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 10.dp, horizontal =  20.dp)
+                        .padding(vertical = 10.dp, horizontal = 20.dp)
                 ) {
                     Text(
                         text = stringResource(R.string.TuitionFee_Balance),
@@ -264,7 +288,10 @@ fun TuitionFeeScreen(
                         text = "${appViewModel.formatCurrency(appUiState.user.balance)} VND",
                         style = CustomTypography.bodyMedium,
                         fontWeight = FontWeight.Bold,
-                        color = if (appUiState.tuitionFee.amount <= appUiState.user.balance) AcceptColor else WarningColor,
+                        color = if (appUiState.tuitionFee?.let {
+                                it.amount <= appUiState.user.balance
+                            } ?: false) AcceptColor else WarningColor,
+
                         textAlign = TextAlign.End,
                     )
                 }
@@ -281,7 +308,9 @@ fun TuitionFeeScreen(
                         containerColor = PrimaryColor,
                         contentColor = BackgroundColor
                     ),
-                    enabled = appUiState.tuitionFee.amount <= appUiState.user.balance,
+                    enabled = appUiState.tuitionFee?.let {
+                        appUiState.payable && (it.amount <= appUiState.user.balance)
+                    } ?: false,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 10.dp)

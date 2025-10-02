@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -71,8 +72,7 @@ fun PaymentDetails(
 ) {
     val context = LocalContext.current
     val appUiState by appViewModel.uiState.collectAsState()
-    val totalAmount = appUiState.tuitionFee.amount + appUiState.payment.transferFee
-
+    val payment = appUiState.payment
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -83,7 +83,7 @@ fun PaymentDetails(
                     )
                 },
                 navigationIcon = {
-                    IconButton (
+                    IconButton(
                         onClick = {
                             // TODO: NAV BACK EVENT HANDLING
                             navController.navigateUp()
@@ -126,19 +126,19 @@ fun PaymentDetails(
                             text = "${appViewModel.formatCurrency(appUiState.user.balance)} VND",
                             style = CustomTypography.bodyMedium,
                             fontWeight = FontWeight.Bold,
-                            color = if (totalAmount <= appUiState.user.balance) AcceptColor else WarningColor,
+                            color = if (payment.totalAmount <= appUiState.user.balance) AcceptColor else WarningColor,
                             textAlign = TextAlign.End,
                         )
                     }
                     Button(
-                        onClick = { appViewModel.verifyBeforeSendOTP(context = context) },
+                        onClick = { appViewModel.sendOTP(context = context) },
                         shape = RoundedCornerShape(8.dp),
                         elevation = ButtonDefaults.buttonElevation(4.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = PrimaryColor,
                             contentColor = BackgroundColor
                         ),
-                        enabled = totalAmount <= appUiState.user.balance,
+                        enabled = payment.totalAmount <= appUiState.user.balance,
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
@@ -150,7 +150,8 @@ fun PaymentDetails(
                 }
             }
         },
-        containerColor = SecondaryColor
+        containerColor = SecondaryColor,
+        modifier = Modifier.systemBarsPadding()
     ) { innerPadding ->
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -185,44 +186,28 @@ fun PaymentDetails(
                     )
                     PaymentInfLine(
                         lineText = R.string.PaymentInformation_ReferenceCode,
-                        content = appUiState.payment.referenceCode,
+                        content = payment.paymentRef ?: "",
                         modifier = Modifier.fillMaxWidth()
                     )
                     PaymentInfLine(
                         lineText = R.string.PaymentInformation_StudentName,
-                        content = appUiState.tuitionFee.studentFullName,
+                        content = payment.studentFullName,
                         modifier = Modifier.fillMaxWidth()
                     )
                     PaymentInfLine(
                         lineText = R.string.PaymentInformation_StudentID,
-                        content = appUiState.tuitionFee.studentId,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    PaymentInfLine(
-                        lineText = R.string.PaymentInformation_Content,
-                        content = appUiState.tuitionFee.content,
+                        content = appUiState.payment.studentId,
                         modifier = Modifier.fillMaxWidth()
                     )
                     PaymentInfLine(
                         lineText = R.string.PaymentInformation_TuitionFee,
-                        content = "${appViewModel.formatCurrency(appUiState.tuitionFee.amount)} VND",
+                        content = "${appViewModel.formatCurrency(payment.totalAmount)} VND",
                         contentColor = AlertColor,
                         modifier = Modifier.fillMaxWidth()
                     )
                     PaymentInfLine(
-                        lineText = R.string.PaymentInformation_BeneficiaryAccount,
-                        content = appUiState.payment.beneficiaryAccount,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    PaymentInfLine(
                         lineText = R.string.PaymentInformation_TransferFee,
-                        content = if (appUiState.payment.transferFee == BigDecimal.ZERO) {
-                            "Free"
-                        }
-                        else {
-                            "${appViewModel.formatCurrency(appUiState.payment.transferFee)} VND"
-                        },
-                        contentColor = if (appUiState.payment.transferFee == BigDecimal.ZERO) AcceptColor else AlertColor,
+                        content = "Free",
                         modifier = Modifier.fillMaxWidth()
                     )
                     Spacer(modifier = Modifier.height(10.dp))
@@ -232,7 +217,7 @@ fun PaymentDetails(
                     )
                     PaymentInfLine(
                         lineText = R.string.PaymentInformation_Total,
-                        content = "${appViewModel.formatCurrency(totalAmount)} VND",
+                        content = "${appViewModel.formatCurrency(payment.totalAmount)} VND",
                         contentColor = AlertColor,
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -243,7 +228,7 @@ fun PaymentDetails(
             OtpDialogCustom(
                 otpLength = 6,
                 otpValue = appViewModel.otpValue,
-                onOtpChange = { appViewModel.onOtpChange(it) },
+                onOtpChange = { appViewModel.onOtpChange(it, context, navController) },
                 onDismiss = { appViewModel.onOtpDismiss() }
             )
         }
