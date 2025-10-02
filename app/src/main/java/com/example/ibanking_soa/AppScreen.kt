@@ -27,7 +27,7 @@ fun AppScreen(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screens.Login.name
+        startDestination = Screens.TuitionFee.name
     ) {
         composable(route = Screens.Login.name) {
             LoginScreen(
