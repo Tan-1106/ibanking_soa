@@ -11,11 +11,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -54,7 +56,8 @@ fun CustomTextButton(
     containerColor: Color,
     borderColor: Color,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isLoading: Boolean = false
 ) {
     Button(
         onClick = onClick,
@@ -70,11 +73,19 @@ fun CustomTextButton(
         ),
         modifier = modifier
     ) {
-        Text(
-            text = stringResource(buttonText),
-            fontWeight = FontWeight.Medium,
-            style = CustomTypography.bodyLarge,
-        )
+        if (isLoading) {
+            CircularProgressIndicator(
+                color = Color.White,
+                modifier = Modifier.size(20.dp)
+            )
+        } else {
+
+            Text(
+                text = stringResource(buttonText),
+                fontWeight = FontWeight.Medium,
+                style = CustomTypography.bodyLarge,
+            )
+        }
     }
 }
 
@@ -88,7 +99,7 @@ fun CustomInformationTextField(
     modifier: Modifier = Modifier,
     isEnable: Boolean = true,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default
-){
+) {
     OutlinedTextField(
         placeholder = {
             Text(

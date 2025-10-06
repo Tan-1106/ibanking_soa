@@ -189,35 +189,34 @@ fun TuitionFeeScreen(
                             .fillMaxWidth(0.8f)
                     )
                     Spacer(modifier = Modifier.width(5.dp))
-                    if (appUiState.isLoading) {
-                        CircularProgressIndicator(
-                            color = PrimaryColor,
-                            strokeWidth = 3.dp,
-                            modifier = Modifier
-                                .size(40.dp)
-                        )
-                    } else {
-                        Button(
-                            onClick = {
-                                appViewModel.onSearchStudentId(navController)
-                            },
-                            shape = RoundedCornerShape(8.dp),
-                            elevation = ButtonDefaults.buttonElevation(4.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = PrimaryColor,
-                                contentColor = BackgroundColor
-                            ),
-                            modifier = Modifier
-                                .height(60.dp)
-                                .fillMaxWidth()
-                        ) {
+                    Button(
+                        onClick = {
+                            appViewModel.onSearchStudentId(navController)
+                        },
+                        shape = RoundedCornerShape(8.dp),
+                        elevation = ButtonDefaults.buttonElevation(4.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = PrimaryColor,
+                            contentColor = BackgroundColor
+                        ),
+                        modifier = Modifier
+                            .height(60.dp)
+                            .fillMaxWidth()
+                    ) {
+                        if (appUiState.isSearching) {
+                            CircularProgressIndicator(
+                                color = Color.White,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        } else {
+
                             Icon(
                                 imageVector = Icons.Default.Search,
                                 contentDescription = null
                             )
                         }
-
                     }
+
                 }
             }
             DashedDivider(
@@ -233,14 +232,14 @@ fun TuitionFeeScreen(
                     .padding(vertical = 10.dp, horizontal = 20.dp)
             ) {
                 if (appUiState.tuitionFee == null) {
-                    Row (
+                    Row(
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.fillMaxWidth()
-                    ){
+                    ) {
                         Text(
                             text = "No Information Found",
-                            style = CustomTypography.titleSmall
+                            style = CustomTypography.labelMedium
                         )
                     }
                 } else {
@@ -317,11 +316,19 @@ fun TuitionFeeScreen(
                         .padding(bottom = 10.dp)
                         .padding(horizontal = 20.dp)
                 ) {
-                    Text(
-                        text = stringResource(R.string.TuitionFee_ButtonText),
-                        fontWeight = FontWeight.Medium,
-                        style = CustomTypography.bodyLarge,
-                    )
+                    if (appUiState.isCreatingPayment) {
+                        CircularProgressIndicator(
+                            color = Color.White,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    } else {
+
+                        Text(
+                            text = stringResource(R.string.TuitionFee_ButtonText),
+                            fontWeight = FontWeight.Medium,
+                            style = CustomTypography.bodyLarge,
+                        )
+                    }
                 }
             }
             if (logoutDialogVisible) {

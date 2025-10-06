@@ -171,7 +171,6 @@ fun LoginScreen(
                     )
                 }
             }
-            if (!appUiState.isLoading) {
 
                 CustomTextButton(
                     buttonText = R.string.LoginScreen_ButtonText,
@@ -184,11 +183,9 @@ fun LoginScreen(
                             navController = navController
                         )
                     },
+                    isLoading = appUiState.isLogging,
                     modifier = Modifier.width(300.dp)
                 )
-            } else {
-                CircularProgressIndicator()
-            }
 
 
         }

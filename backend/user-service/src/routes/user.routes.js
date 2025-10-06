@@ -10,6 +10,7 @@ const router = express.Router();
 
 router.post("/register", validate(registerSchema), userController.register);
 router.post("/login", validate(loginSchema), userController.login);
+router.post("/refresh", userController.refreshToken);
 router.get("/me", authMiddleware, userController.getMe);
 
 router.get("/:id", authMiddleware, userController.getUser);

@@ -1,19 +1,31 @@
 package com.example.ibanking_soa.data.retrofit
 
+import android.content.Context
 import com.example.ibanking_soa.data.api.OtpApi
 import com.example.ibanking_soa.data.api.PaymentApi
 import com.example.ibanking_soa.data.api.TuitionApi
 import com.example.ibanking_soa.data.api.UserApi
+import com.example.ibanking_soa.data.security.AuthInterceptor
+import com.example.ibanking_soa.data.security.TokenAuthenticator
 import com.google.gson.Gson
+import kotlinx.serialization.Contextual
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-val gson = Gson()
 
-class RetrofitInstance {
+class RetrofitInstance (context: Context){
+    private val sharedPreferences = context.getSharedPreferences("auth_preferences", Context.MODE_PRIVATE)
     private val retrofit by lazy {
+        val client = OkHttpClient
+            .Builder()
+            .addInterceptor (AuthInterceptor(sharedPreferences =sharedPreferences ))
+            .authenticator (TokenAuthenticator(sharedPreferences = sharedPreferences))
+            .build()
+
         Retrofit.Builder()
             .baseUrl("http://10.72.239.178:4006/")
+            .client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }

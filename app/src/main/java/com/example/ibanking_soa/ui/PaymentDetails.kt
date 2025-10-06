@@ -25,6 +25,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -141,11 +142,19 @@ fun PaymentDetails(
                         enabled = payment.totalAmount <= appUiState.user.balance,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text(
-                            text = stringResource(R.string.PaymentInformation_Transfer),
-                            fontWeight = FontWeight.Medium,
-                            style = CustomTypography.bodyLarge,
-                        )
+                        if (appUiState.isSendingOtp) {
+                            CircularProgressIndicator(
+                                color = Color.White,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        } else {
+
+                            Text(
+                                text = stringResource(R.string.PaymentInformation_Transfer),
+                                fontWeight = FontWeight.Medium,
+                                style = CustomTypography.bodyLarge,
+                            )
+                        }
                     }
                 }
             }

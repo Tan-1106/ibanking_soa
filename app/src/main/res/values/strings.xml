@@ -51,7 +51,8 @@
     <string name="PaymentDetails_Success">Successful</string>
     <string name="PaymentDetails_ReferenceCode">Reference Code</string>
     <string name="PaymentDetails_Date">Date</string>
-    <string name="PaymentDetails_BeneficiaryAccount">Beneficiary account</string>
+    <string name="PaymentDetails_StudentId">Student ID</string>
+    <string name="PaymentDetails_StudentName">Beneficiary account</string>
     <string name="PaymentDetails_Amount">Payment amount</string>
     <string name="PaymentDetails_Content">Content</string>
 

@@ -1,8 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
-import otpRoutes from "./routes/notification.routes.js";
 import errorHandler from "./middlewares/errorHandler.middleware.js";
-
+import notificationRouter from "./routes/notification.routes.js";
 dotenv.config();
 const app = express();
 
@@ -13,12 +12,10 @@ app.get("/", (req, res) => {
   res.json({ service: "notification-service", status: "ok" });
 });
 
-// health check route
 app.get("/health", (req, res) => {
   res.json({ status: "ok" });
 });
 
-// otp routes
-app.use("/notifications", otpRoutes);
+app.use("/notifications", notificationRouter);
 app.use(errorHandler)
 export default app;

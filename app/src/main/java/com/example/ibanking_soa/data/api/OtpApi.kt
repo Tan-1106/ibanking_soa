@@ -11,6 +11,5 @@ interface OtpApi {
     @POST("/otp-service/otps/send")
     suspend fun sendOtp(
         @Body data: SendOtpRequest,
-        @Header("Authorization") token: String
     ): Response<ApiResponse<Boolean>>
 }

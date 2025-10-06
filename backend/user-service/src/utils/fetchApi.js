@@ -2,7 +2,6 @@ import axios from "axios";
 import ApiError from "./ApiError.js";
 const fetchApi = async (url, { method = "GET", params = {}, body = {}, headers = {} }) => {
     try {
-
         const response = await axios({
             url,
             method,
@@ -13,8 +12,8 @@ const fetchApi = async (url, { method = "GET", params = {}, body = {}, headers =
         const result = response.data;
         return result;
     } catch (error) {
+        console.log(error);
         const data = error.response.data;
-
         throw new ApiError(data.status, data.title, data.message, data.stack);
     }
 };

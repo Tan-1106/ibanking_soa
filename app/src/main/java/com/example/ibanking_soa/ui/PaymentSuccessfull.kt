@@ -141,29 +141,24 @@ fun PaymentSuccessful(
             )
             PaymentInfLine(
                 lineText = R.string.PaymentDetails_ReferenceCode,
-                content = appUiState.selectedHistoryPayment.payment.paymentRef?:"",
+                content = appUiState.payment.paymentRef?:"",
                 modifier = Modifier.fillMaxWidth()
             )
             PaymentInfLine(
                 lineText = R.string.PaymentDetails_Date,
-                content = appUiState.selectedHistoryPayment.date.format(formatter),
+                content = appUiState.payment.paidAt.format(formatter),
                 modifier = Modifier.fillMaxWidth()
             )
             PaymentInfLine(
-                lineText = R.string.PaymentDetails_BeneficiaryAccount,
-                content = appUiState.selectedHistoryPayment.payment.studentId,
+                lineText = R.string.PaymentDetails_StudentId,
+                content = appUiState.payment.studentId,
                 modifier = Modifier.fillMaxWidth()
             )
             PaymentInfLine(
                 lineText = R.string.PaymentDetails_Amount,
-                content = "${appViewModel.formatCurrency(appUiState.selectedHistoryPayment.payment.totalAmount)} VND",
+                content = "${appViewModel.formatCurrency(appUiState.payment.totalAmount)} VND",
                 modifier = Modifier.fillMaxWidth()
             )
-//            PaymentInfLine(
-//                lineText = R.string.PaymentDetails_Content,
-//                content = appUiState.selectedHistoryPayment.tuitionFee.content,
-//                modifier = Modifier.fillMaxWidth()
-//            )
         }
     }
 }

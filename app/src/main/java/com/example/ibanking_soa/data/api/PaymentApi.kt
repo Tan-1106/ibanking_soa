@@ -15,13 +15,13 @@ interface PaymentApi {
     @GET("/payment-service/payments/check-in-transaction/{studentId}")
     suspend fun isInTransaction(
         @Path("studentId") studentId: String,
-        @Header("Authorization") token: String
     ): Response<ApiResponse<Payment>>
     @POST("/payment-service/payments")
     suspend fun createPayment(
-        @Header("Authorization") token: String,
         @Body paymentRequest: PaymentRequest
     ):Response<ApiResponse<Payment>>
 
+    @GET("/payment-service/payments/histories")
+    suspend fun getPaymentHistories(): Response<ApiResponse<List<Payment>>>
 
 }

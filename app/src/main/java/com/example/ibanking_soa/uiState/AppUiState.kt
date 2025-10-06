@@ -8,7 +8,10 @@ import java.math.BigDecimal
 import java.time.LocalDateTime
 
 data class AppUiState(
-    var isLoading: Boolean = false,
+    var isLogging: Boolean = false,
+    var isSearching: Boolean = false,
+    var isCreatingPayment: Boolean = false,
+    var isSendingOtp: Boolean = false,
     var payable: Boolean = false,
     val user: User = User(),
     val tuitionFee: TuitionFee? = null,

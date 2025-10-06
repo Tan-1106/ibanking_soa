@@ -27,10 +27,14 @@ data class ListUserResponse(
 )
 
 data class LoginResponse(
-    val token: String,
+    val access:String,
+    val refresh:String,
     val user: User
 )
-
+data class RefreshTokenResponse(
+    val access:String,
+    val refresh:String,
+)
 data class TuitionResponse(
     val isPayable: Boolean,
     val studentId: String,

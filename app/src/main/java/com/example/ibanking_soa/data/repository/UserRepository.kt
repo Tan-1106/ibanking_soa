@@ -1,5 +1,6 @@
 package com.example.ibanking_soa.data.repository
 
+import com.example.ibanking_soa.MyApplication
 import com.example.ibanking_soa.data.dto.ConfirmPaymentRequest
 import com.example.ibanking_soa.data.dto.LoginRequest
 import com.example.ibanking_soa.data.dto.LoginResponse
@@ -10,13 +11,12 @@ import com.example.ibanking_soa.uiState.Payment
 
 class UserRepository {
 
-    val token= com.example.ibanking_soa.ui.theme.token
-    private val api = RetrofitInstance().userApi
+    private val api = MyApplication.retrofitInstance.userApi
 
     suspend fun login(loginRequest: LoginRequest): ApiResult<LoginResponse> {
         return safeApiCall { api.login(loginRequest) }
     }
     suspend fun confirmPayment(confirmPaymentRequest: ConfirmPaymentRequest): ApiResult<Payment> {
-        return safeApiCall { api.confirmPayment(confirmPaymentRequest, token) }
+        return safeApiCall { api.confirmPayment(confirmPaymentRequest) }
     }
 }

@@ -5,6 +5,7 @@ import ApiError from "../utils/ApiError.js";
 import fetchApi from "../utils/fetchApi.js";
 const OTP_SERVICE_URL = process.env.OTP_SERVICE_URL || "http://otp-service:4004"
 const PAYMENT_SERVICE_URL = process.env.PAYMENT_SERVICE_URL || "http://payment-service:4003"
+const NOTIFICATION_SERVICE_URL = "http://notification-service:4005"
 const userService = {
   registerUser: async ({ username, password, fullName, email }) => {
     const existingUser = await User.findOne({ where: { email } });
@@ -30,17 +31,56 @@ const userService = {
     if (!isPasswordValid) {
       throw new ApiError(401, "Login failed", "Invalid email or password");
     }
-    const token = jwt.sign(
+    const access = jwt.sign(
       {
+        id: user.id,
+        email: user.email,
+        type: "access"
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: '30s' }
+    );
+    const refresh = jwt.sign(
+      {
+        type: "refresh",
         id: user.id,
         email: user.email
       },
       process.env.JWT_SECRET,
-      { expiresIn: '1d' }
+      { expiresIn: '7d' }
     );
-    return { token, user: user };
-  },
 
+    return { access, refresh, user: user };
+  },
+  refreshToken: async (token) => {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    if (decoded.type !== "refresh") {
+      throw new ApiError(401, "Invalid token", "Token is not a refresh token");
+    }
+    const user = await User.findByPk(decoded.id);
+    if (!user) {
+      throw new ApiError(404, "User not found", " User with ID " + decoded.id + " does not exist");
+    }
+    const newAccess = jwt.sign(
+      {
+        id: user.id,
+        email: user.email,
+        type: "access"
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: '15m' }
+    );
+    const newRefresh = jwt.sign(
+      {
+        type: "refresh",
+        id: user.id,
+        email: user.email
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+    return { access: newAccess, refresh: newRefresh };
+  },
   getUserById: async (id) => {
     return await User.findByPk(id, { attributes: { exclude: ['password'] } });
   },
@@ -135,6 +175,21 @@ const userService = {
     if (!response.success) {
       throw new ApiError(response.status, response.title, response.message, response.stack);
     }
+    apiEndpoint = `${NOTIFICATION_SERVICE_URL}/notifications/invoice`;
+    fetchApi(apiEndpoint, {
+      method: "POST",
+      body: {
+        email: user.email,
+        paymentId: payment.id,
+        amount: payment.totalAmount,
+        paidAt: new Date()
+      },
+      headers: {
+        "Content-Type": "application/json"
+      }
+    }).then(() => {
+      console.log("Invoice sent to " + user.email);
+    });
     return response.data;
   },
 };

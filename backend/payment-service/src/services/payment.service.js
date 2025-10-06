@@ -77,6 +77,10 @@ const paymentService = {
   checkInTransaction: async (userId, studentId) => {
     const payment = await Payment.findOne({ where: { userId, studentId, status: "pending" } });
     return payment;
+  },
+  getPaymentHistories: async (userId) => {
+    const payments = await Payment.findAll({ where: { userId } });
+    return payments;
   }
 }
 export default paymentService;

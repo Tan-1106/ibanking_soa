@@ -11,8 +11,6 @@ import androidx.core.content.edit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
-import androidx.security.crypto.EncryptedSharedPreferences
-import androidx.security.crypto.MasterKey
 import com.example.ibanking_soa.Screens
 import com.example.ibanking_soa.data.dto.ConfirmPaymentRequest
 import com.example.ibanking_soa.data.dto.LoginRequest
@@ -21,7 +19,6 @@ import com.example.ibanking_soa.data.repository.PaymentRepository
 import com.example.ibanking_soa.data.repository.TuitionRepository
 import com.example.ibanking_soa.data.repository.UserRepository
 import com.example.ibanking_soa.data.utils.ApiResult
-import com.example.ibanking_soa.ui.theme.token
 import com.example.ibanking_soa.uiState.AppUiState
 import com.example.ibanking_soa.uiState.PaymentHistoryItem
 import com.example.ibanking_soa.uiState.TuitionFee
@@ -54,15 +51,16 @@ class AppViewModel : ViewModel() {
         private set
 
     private fun getSharedPrefs(context: Context): SharedPreferences {
-        val masterKey = MasterKey.Builder(context)
-            .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-            .build()
-        val sharedPrefs = EncryptedSharedPreferences.create(
-            context, "soa_midterm_credentials", masterKey,
-            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-        )
-        return sharedPrefs
+//        val masterKey = MasterKey.Builder(context)
+//            .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+//            .build()
+//        val sharedPrefs = EncryptedSharedPreferences.create(
+//            context, "soa_midterm_credentials", masterKey,
+//            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+//            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+//        )
+
+        return context.getSharedPreferences("auth_preferences", Context.MODE_PRIVATE)
     }
 
     fun clearUsername() {
@@ -94,7 +92,7 @@ class AppViewModel : ViewModel() {
         navController: NavHostController
     ) {
         _uiState.update {
-            it.copy(isLoading = true)
+            it.copy(isLogging = true)
         }
         errorMessage = ""
         val username = usernameValue
@@ -105,7 +103,7 @@ class AppViewModel : ViewModel() {
                 val apiResult = userRepository.login(loginRequest)
                 if (apiResult is ApiResult.Error) {
                     _uiState.update {
-                        it.copy(isLoading = false)
+                        it.copy(isLogging = false)
                     }
                     errorMessage = apiResult.message
                     return@launch
@@ -115,12 +113,13 @@ class AppViewModel : ViewModel() {
                 _uiState.update {
                     it.copy(
                         user = userData,
-                        isLoading = false
+                        isLogging = false
                     )
                 }
                 saveCredentials(username, password, context)
                 getSharedPrefs(context).edit {
-                    putString("token", loginResponse.token)
+                    putString("access", loginResponse.access)
+                    putString("refresh", loginResponse.refresh)
                 }
                 Log.d("err", "Token: ${getSharedPrefs(context).getString("token", "")}")
                 Log.d("Login", "Login Response: $loginResponse")
@@ -181,7 +180,7 @@ class AppViewModel : ViewModel() {
 
     ) {
         _uiState.update {
-            it.copy(isLoading = true)
+            it.copy(isSearching = true)
         }
         viewModelScope.launch {
             val apiResultPayment = paymentRepository.isInTransaction(studentIdValue)
@@ -196,7 +195,7 @@ class AppViewModel : ViewModel() {
 
                                     _uiState.update {
                                         it.copy(
-                                            isLoading = false,
+                                            isSearching = false,
                                             payable = apiResultTuition.data.isPayable,
                                             tuitionFee = TuitionFee(
                                                 studentId = apiResultTuition.data.studentId,
@@ -209,7 +208,7 @@ class AppViewModel : ViewModel() {
                                 else{
                                     _uiState.update {
                                         it.copy(
-                                            isLoading = false,
+                                            isSearching = false,
                                             payable = false,
 
                                         )
@@ -221,7 +220,9 @@ class AppViewModel : ViewModel() {
                             is ApiResult.Error -> {
                                 _uiState.update {
                                     it.copy(
-                                        isLoading = false,
+                                        isSearching = false,
+                                        payable = false,
+                                        tuitionFee = null
                                     )
                                 }
                                 errorMessage = apiResultTuition.message
@@ -232,7 +233,7 @@ class AppViewModel : ViewModel() {
                     } else {
                         _uiState.update {
                             it.copy(
-                                isLoading = false,
+                                isSearching = false,
                                 payable = false,
                                 payment = apiResultPayment.data
                             )
@@ -246,7 +247,9 @@ class AppViewModel : ViewModel() {
                 is ApiResult.Error -> {
                     _uiState.update {
                         it.copy(
-                            isLoading = false,
+                            isSearching = false,
+                            payable = false,
+                            tuitionFee =null
                         )
                     }
                     errorMessage = apiResultPayment.message
@@ -272,7 +275,7 @@ class AppViewModel : ViewModel() {
         navController: NavHostController
     ) {
         _uiState.update {
-            it.copy(isLoading = true)
+            it.copy(isCreatingPayment = true)
         }
         viewModelScope.launch {
             val apiResult = paymentRepository.createPayment(studentIdValue)
@@ -281,7 +284,7 @@ class AppViewModel : ViewModel() {
                     if (apiResult.data != null) {
                         _uiState.update {
                             it.copy(
-                                isLoading = false,
+                                isCreatingPayment = false,
                                 payment = apiResult.data
                             )
                         }
@@ -289,7 +292,7 @@ class AppViewModel : ViewModel() {
                     } else {
                         _uiState.update {
                             it.copy(
-                                isLoading = false,
+                                isCreatingPayment = false,
                             )
                         }
                         Toast.makeText(context, "Failed to create payment", Toast.LENGTH_SHORT)
@@ -300,7 +303,7 @@ class AppViewModel : ViewModel() {
                 is ApiResult.Error -> {
                     _uiState.update {
                         it.copy(
-                            isLoading = false,
+                            isCreatingPayment = false,
                         )
                     }
                     Toast.makeText(context, apiResult.message, Toast.LENGTH_SHORT).show()
@@ -315,7 +318,7 @@ class AppViewModel : ViewModel() {
 
     fun sendOTP(context: Context) {
         _uiState.update {
-            it.copy(isLoading = true)
+            it.copy(isSendingOtp = true)
         }
         viewModelScope.launch {
             val apiResult = otpRepository.sendOtp(_uiState.value.payment.id)
@@ -328,7 +331,7 @@ class AppViewModel : ViewModel() {
                 Toast.makeText(context, "OTP Sent", Toast.LENGTH_SHORT).show()
                 isOtpBoxVisible = true
                 _uiState.update {
-                    it.copy(isLoading = false)
+                    it.copy(isSendingOtp = false)
                 }
             } else {
                 Toast.makeText(context, "Failed to send OTP", Toast.LENGTH_SHORT).show()
@@ -360,7 +363,6 @@ class AppViewModel : ViewModel() {
                     is ApiResult.Success -> {
                         _uiState.update {
                             it.copy(
-                                isLoading = false,
                                 payment = apiResult.data
                             )
                         }
@@ -385,7 +387,43 @@ class AppViewModel : ViewModel() {
     fun onViewHistoryClick(
         navController: NavHostController
     ) {
-        // TODO: GET DATA FOR UI STATE
+        viewModelScope.launch {
+            val apiResult = paymentRepository.getPaymentHistories()
+            when (apiResult) {
+                is ApiResult.Success -> {
+                    if (apiResult.data != null) {
+                        val paymentHistoryList = apiResult.data.map {
+                            PaymentHistoryItem(
+                                status = when (it.status) {
+                                    "pending" -> PaymentHistoryStatus.PENDING.status
+                                    "success" -> PaymentHistoryStatus.SUCCESS.status
+                                    "failed" -> PaymentHistoryStatus.FAILED.status
+                                    else -> PaymentHistoryStatus.FAILED.status
+                                },
+                                tuitionFee = TuitionFee(
+                                    studentId = it.studentId,
+                                    studentFullName = it.studentFullName,
+                                    amount = it.totalAmount
+                                ),
+                                payment = it,
+                                date = java.time.LocalDateTime.parse(
+                                    it.createdAt.substring(0, 19)
+                                )
+                            )
+                        }.sortedByDescending { it.date }
+                        _uiState.update {
+                            it.copy(
+                                paymentHistory = paymentHistoryList
+                            )
+                        }
+                    }
+                }
+
+                is ApiResult.Error -> {
+                    Log.d("err", "Get Payment Histories Error: ${apiResult.message}")
+                }
+            }
+        }
 
         navController.navigate(Screens.HistoryList.name)
     }

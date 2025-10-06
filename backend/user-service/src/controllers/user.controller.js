@@ -14,7 +14,11 @@ const userController = {
     const result = await userService.loginUser({ email, password });
     res.status(200).json(new ApiResponse(200, "Login successful", result));
   },
-
+  refreshToken: async (req, res) => {
+    const { refreshToken } = req.body;
+    const result = await userService.refreshToken(refreshToken);
+    res.status(200).json(new ApiResponse(200, "Token refreshed successfully", result));
+  },
   getUser: async (req, res) => {
 
     const { id } = req.params;

@@ -59,6 +59,14 @@ const paymentController = {
       res.status(200).json(new ApiResponse(200, "No pending payment transaction", null));
     }
     res.status(200).json(new ApiResponse(200, "Payment transaction status", payment));
+  },
+  getPaymentHistories: async (req, res) => {
+    const userId = req.user.id;
+    if (!userId) {
+      throw new ApiError(401, "Unauthorized", " User ID not found in token ");
+    }
+    const paymentHistories = await paymentService.getPaymentHistories(userId);
+    res.status(200).json(new ApiResponse(200, "Payment histories retrieved", paymentHistories));
   }
 }
 export {
