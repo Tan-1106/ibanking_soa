@@ -20,6 +20,7 @@ import com.example.ibanking_soa.data.repository.TuitionRepository
 import com.example.ibanking_soa.data.repository.UserRepository
 import com.example.ibanking_soa.data.utils.ApiResult
 import com.example.ibanking_soa.uiState.AppUiState
+import com.example.ibanking_soa.uiState.Payment
 import com.example.ibanking_soa.uiState.PaymentHistoryItem
 import com.example.ibanking_soa.uiState.TuitionFee
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -191,7 +192,7 @@ class AppViewModel : ViewModel() {
                             tuitionRepository.getTuitionByStudentId(studentIdValue)
                         when (apiResultTuition) {
                             is ApiResult.Success -> {
-                                if (apiResultTuition.data.totalPending> BigDecimal(0)) {
+                                if (apiResultTuition.data.totalPending > BigDecimal(0)) {
 
                                     _uiState.update {
                                         it.copy(
@@ -204,14 +205,13 @@ class AppViewModel : ViewModel() {
                                             ),
                                         )
                                     }
-                                }
-                                else{
+                                } else {
                                     _uiState.update {
                                         it.copy(
                                             isSearching = false,
                                             payable = false,
 
-                                        )
+                                            )
                                     }
                                     errorMessage = "No tuition fee due for this student ID"
                                 }
@@ -225,6 +225,7 @@ class AppViewModel : ViewModel() {
                                         tuitionFee = null
                                     )
                                 }
+                                studentIdValue=""
                                 errorMessage = apiResultTuition.message
                             }
                         }
@@ -249,7 +250,7 @@ class AppViewModel : ViewModel() {
                         it.copy(
                             isSearching = false,
                             payable = false,
-                            tuitionFee =null
+                            tuitionFee = null
                         )
                     }
                     errorMessage = apiResultPayment.message
@@ -285,7 +286,9 @@ class AppViewModel : ViewModel() {
                         _uiState.update {
                             it.copy(
                                 isCreatingPayment = false,
-                                payment = apiResult.data
+                                payment = apiResult.data,
+                                tuitionFee = null,
+                                payable = false
                             )
                         }
                         navController.navigate(Screens.PaymentDetails.name)
@@ -304,6 +307,7 @@ class AppViewModel : ViewModel() {
                     _uiState.update {
                         it.copy(
                             isCreatingPayment = false,
+                            payable = false
                         )
                     }
                     Toast.makeText(context, apiResult.message, Toast.LENGTH_SHORT).show()
@@ -368,7 +372,10 @@ class AppViewModel : ViewModel() {
                         }
                         isOtpBoxVisible = false
                         Toast.makeText(context, "Payment Successful", Toast.LENGTH_SHORT).show()
-                        navController.navigate(Screens.PaymentSuccessful.name)
+                        reloadUser(context,navController)
+                        navController.navigate(Screens.PaymentSuccessful.name){
+                            popUpTo(Screens.PaymentDetails.name) { inclusive = true }
+                        }
                     }
 
                     is ApiResult.Error -> {
@@ -391,46 +398,32 @@ class AppViewModel : ViewModel() {
             val apiResult = paymentRepository.getPaymentHistories()
             when (apiResult) {
                 is ApiResult.Success -> {
-                    if (apiResult.data != null) {
-                        val paymentHistoryList = apiResult.data.map {
-                            PaymentHistoryItem(
-                                status = when (it.status) {
-                                    "pending" -> PaymentHistoryStatus.PENDING.status
-                                    "success" -> PaymentHistoryStatus.SUCCESS.status
-                                    "failed" -> PaymentHistoryStatus.FAILED.status
-                                    else -> PaymentHistoryStatus.FAILED.status
-                                },
-                                tuitionFee = TuitionFee(
-                                    studentId = it.studentId,
-                                    studentFullName = it.studentFullName,
-                                    amount = it.totalAmount
-                                ),
-                                payment = it,
-                                date = java.time.LocalDateTime.parse(
-                                    it.createdAt.substring(0, 19)
-                                )
-                            )
-                        }.sortedByDescending { it.date }
-                        _uiState.update {
-                            it.copy(
-                                paymentHistory = paymentHistoryList
-                            )
-                        }
+                    _uiState.update {
+                        it.copy(
+                            paymentHistory = apiResult.data
+                        )
                     }
+                    Log.e("paymentHistories", apiResult.data.toString())
+                    navController.navigate(Screens.HistoryList.name)
+
                 }
 
                 is ApiResult.Error -> {
                     Log.d("err", "Get Payment Histories Error: ${apiResult.message}")
+                    _uiState.update {
+                        it.copy(
+                            paymentHistory = emptyList()
+                        )
+                    }
                 }
             }
         }
 
-        navController.navigate(Screens.HistoryList.name)
     }
 
     // PAYMENT DETAILS
     fun onViewPaymentDetailsClick(
-        selectedPayment: PaymentHistoryItem,
+        selectedPayment: Payment,
         navController: NavHostController
     ) {
         _uiState.update {
@@ -441,5 +434,22 @@ class AppViewModel : ViewModel() {
 
         navController.navigate(Screens.HistoryDetails.name)
     }
-
+    fun reloadUser(context: Context,navController: NavHostController) {
+        viewModelScope.launch {
+            val apiResult= userRepository.getMyInformation()
+            when(apiResult){
+                is ApiResult.Success -> {
+                    _uiState.update {
+                        it.copy(
+                            user = apiResult.data
+                        )
+                    }
+                }
+                is ApiResult.Error -> {
+                    Toast.makeText(context, "Session Expired", Toast.LENGTH_SHORT).show()
+                    navController.navigate(Screens.Login.name)
+                }
+            }
+        }
+    }
 }

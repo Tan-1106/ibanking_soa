@@ -32,9 +32,9 @@ const otpService = {
       throw new ApiError(404, "Payment not found", " Payment with ID " + paymentId + " does not exist");
     }
     if (payment.status !== "pending") {
-      throw new ApiError(400, "Invalid Payment Status", " OTP can only be sent for pending payments");
+      throw new ApiError(400, "Invalid Payment Status", "Payment was expired");
     }
-
+    await OTP.destroy({ where: { userId, paymentId } });
     const code = crypto.randomInt(100000, 999999).toString();
     const expiresAt = new Date(Date.now() + 60 * 1000);
     const otp = await OTP.create({ userId, code, paymentId, expiresAt });

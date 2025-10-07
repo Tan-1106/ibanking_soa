@@ -16,8 +16,8 @@ data class AppUiState(
     val user: User = User(),
     val tuitionFee: TuitionFee? = null,
     val payment: Payment = Payment(),
-    val paymentHistory: List<PaymentHistoryItem> = testPaymentHistory,
-    val selectedHistoryPayment: PaymentHistoryItem = PaymentHistoryItem(),
+    val paymentHistory: List<Payment> = emptyList<Payment>(),
+    val selectedHistoryPayment: Payment? = null,
 )
 
 data class User(
@@ -40,7 +40,7 @@ data class Payment(
     val createdAt: String = "2025-09-30T11:58:46.000Z",
     val expiresAt: String = "2025-09-30T11:58:46.000Z",
     val id: Int = -1,
-    val paidAt: String = "2025-09-30T11:58:46.000Z",
+    val paidAt: String? = "2025-09-30T11:58:46.000Z",
     val paymentRef: String? = null,
     val status: String = "pending",
     val studentId: String = "52200076",
@@ -60,9 +60,9 @@ data class PaymentHistoryItem(
 enum class PaymentHistoryStatus(
     val status: String
 ) {
-    PENDING("Pending"),
-    SUCCESS("Success"),
-    FAILED("Failed")
+    PENDING("pending"),
+    SUCCESS("completed"),
+    FAILED("failed")
 }
 
 val testPaymentHistory: List<PaymentHistoryItem> = listOf(

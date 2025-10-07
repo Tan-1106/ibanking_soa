@@ -101,7 +101,7 @@ fun PaymentSuccessful(
                 modifier = Modifier
                     .clip(shape = CircleShape)
                     .background(
-                        color = when (appUiState.selectedHistoryPayment.status) {
+                        color = when (appUiState.payment.status) {
                             PaymentHistoryStatus.SUCCESS.status -> SecondaryColor
                             PaymentHistoryStatus.FAILED.status -> AlertColor
                             PaymentHistoryStatus.PENDING.status -> WarningColor
@@ -111,7 +111,7 @@ fun PaymentSuccessful(
                     .padding(20.dp)
             ) {
                 Icon(
-                    imageVector = when (appUiState.selectedHistoryPayment.status) {
+                    imageVector = when (appUiState.payment.status) {
                         PaymentHistoryStatus.SUCCESS.status -> Icons.Default.DoneOutline
                         PaymentHistoryStatus.FAILED.status -> Icons.Default.ErrorOutline
                         PaymentHistoryStatus.PENDING.status -> Icons.Default.Timelapse
@@ -125,9 +125,9 @@ fun PaymentSuccessful(
             }
             Spacer(modifier = Modifier.height(10.dp))
             Text(
-                text = appUiState.selectedHistoryPayment.status,
+                text = appUiState.payment.status,
                 style = CustomTypography.titleLarge,
-                color = when (appUiState.selectedHistoryPayment.status) {
+                color = when (appUiState.payment.status) {
                     PaymentHistoryStatus.SUCCESS.status -> SecondaryColor
                     PaymentHistoryStatus.FAILED.status -> AlertColor
                     PaymentHistoryStatus.PENDING.status -> WarningColor
@@ -146,7 +146,7 @@ fun PaymentSuccessful(
             )
             PaymentInfLine(
                 lineText = R.string.PaymentDetails_Date,
-                content = appUiState.payment.paidAt.format(formatter),
+                content = appUiState.payment.paidAt?.format(formatter)?:"",
                 modifier = Modifier.fillMaxWidth()
             )
             PaymentInfLine(

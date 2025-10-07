@@ -75,7 +75,7 @@ fun CustomTextButton(
     ) {
         if (isLoading) {
             CircularProgressIndicator(
-                color = Color.White,
+                color = Color.Black,
                 modifier = Modifier.size(20.dp)
             )
         } else {

@@ -3,6 +3,7 @@ import PaymentItem from '../models/paymentItem.model.js';
 import ApiError from '../utils/ApiError.js';
 import fetchApi from '../utils/fetchApi.js';
 import { v4 } from 'uuid';
+import { Op } from 'sequelize';
 const STUDENT_SERVICE_URL = process.env.STUDENT_SERVICE_URL;
 const EXPIRED_PAYMENT_TIMEOUT = 5 * 60 * 1000;
 const paymentService = {
@@ -12,7 +13,7 @@ const paymentService = {
     const studentFees = response.data;
     const totalAmount = studentFees.reduce((sum, fee) => sum + parseFloat(fee.amount), 0);
     if (totalAmount <= 0)
-      throw new ApiError(400, "Amount Error", "Total amount must be greater than zero");
+      throw new ApiError(400, "Amount Error", "This student is being paid");
     const studentFeeIds = studentFees.map(f => f.id);
     apiEndpoint = `${STUDENT_SERVICE_URL}/students/fees/processing`;
     await fetchApi(apiEndpoint, { method: "POST", body: { studentFeeIds } });
@@ -79,7 +80,16 @@ const paymentService = {
     return payment;
   },
   getPaymentHistories: async (userId) => {
-    const payments = await Payment.findAll({ where: { userId } });
+    const payments = await Payment.findAll({
+      where: {
+        userId,
+        [Op.or]: [
+          { status: 'completed' },
+          { status: 'failed' }
+        ]
+      },
+      order: [['createdAt', 'DESC']]
+    });
     return payments;
   }
 }

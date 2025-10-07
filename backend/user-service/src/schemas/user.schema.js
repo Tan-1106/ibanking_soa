@@ -5,6 +5,7 @@ export const registerSchema = yup.object({
   username: yup.string().required().min(4).max(32),
   password: yup.string().required().min(6).max(128),
   fullName: yup.string().required().max(64),
+  phoneNumber: yup.string().required().max(10),
   email: yup.string().required().email(),
 });
 

@@ -8,6 +8,7 @@ import com.example.ibanking_soa.data.retrofit.RetrofitInstance
 import com.example.ibanking_soa.data.utils.ApiResult
 import com.example.ibanking_soa.data.utils.safeApiCall
 import com.example.ibanking_soa.uiState.Payment
+import com.example.ibanking_soa.uiState.User
 
 class UserRepository {
 
@@ -18,5 +19,8 @@ class UserRepository {
     }
     suspend fun confirmPayment(confirmPaymentRequest: ConfirmPaymentRequest): ApiResult<Payment> {
         return safeApiCall { api.confirmPayment(confirmPaymentRequest) }
+    }
+    suspend fun getMyInformation():ApiResult<User> {
+        return safeApiCall { api.getMe() }
     }
 }

@@ -4,8 +4,8 @@ import ApiError from "../utils/ApiError.js";
 
 const userController = {
   register: async (req, res) => {
-    const { username, password, fullName, email } = req.body;
-    const newUser = await userService.registerUser({ username, password, fullName, email });
+    const { username, password, fullName, email, phoneNumber } = req.body;
+    const newUser = await userService.registerUser({ username, password, fullName, email, phoneNumber });
     res.status(201).json(new ApiResponse(201, "User registered successfully", newUser));
   },
 

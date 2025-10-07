@@ -46,6 +46,7 @@ import com.example.ibanking_soa.ui.theme.PrimaryColor
 import com.example.ibanking_soa.ui.theme.SecondaryColor
 import com.example.ibanking_soa.ui.theme.WarningColor
 import com.example.ibanking_soa.uiState.PaymentHistoryStatus
+import com.example.ibanking_soa.utils.formatterDate
 import com.example.ibanking_soa.viewModel.AppViewModel
 import java.time.format.DateTimeFormatter
 
@@ -63,7 +64,7 @@ fun PaymentHistoryDetails(
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        text = stringResource(R.string.PaymentHistory),
+                        text = stringResource(R.string.PaymentHistoryDetail),
                         style = CustomTypography.titleLarge
                     )
                 },
@@ -100,7 +101,7 @@ fun PaymentHistoryDetails(
                 modifier = Modifier
                     .clip(shape = CircleShape)
                     .background(
-                        color = when (appUiState.selectedHistoryPayment.status) {
+                        color = when (appUiState.selectedHistoryPayment!!.status) {
                             PaymentHistoryStatus.SUCCESS.status -> SecondaryColor
                             PaymentHistoryStatus.FAILED.status -> AlertColor
                             PaymentHistoryStatus.PENDING.status -> WarningColor
@@ -110,7 +111,7 @@ fun PaymentHistoryDetails(
                     .padding(20.dp)
             ) {
                 Icon(
-                    imageVector = when (appUiState.selectedHistoryPayment.status) {
+                    imageVector = when (appUiState.selectedHistoryPayment!!.status) {
                         PaymentHistoryStatus.SUCCESS.status -> Icons.Default.DoneOutline
                         PaymentHistoryStatus.FAILED.status -> Icons.Default.ErrorOutline
                         PaymentHistoryStatus.PENDING.status -> Icons.Default.Timelapse
@@ -124,9 +125,9 @@ fun PaymentHistoryDetails(
             }
             Spacer(modifier = Modifier.height(10.dp))
             Text(
-                text = appUiState.selectedHistoryPayment.status,
+                text = appUiState.selectedHistoryPayment!!.status,
                 style = CustomTypography.titleLarge,
-                color = when (appUiState.selectedHistoryPayment.status) {
+                color = when (appUiState.selectedHistoryPayment!!.status) {
                     PaymentHistoryStatus.SUCCESS.status -> SecondaryColor
                     PaymentHistoryStatus.FAILED.status -> AlertColor
                     PaymentHistoryStatus.PENDING.status -> WarningColor
@@ -140,29 +141,24 @@ fun PaymentHistoryDetails(
             )
             PaymentInfLine(
                 lineText = R.string.PaymentDetails_ReferenceCode,
-                content = appUiState.selectedHistoryPayment.payment.paymentRef?:"",
+                content = appUiState.selectedHistoryPayment!!.paymentRef?:"",
                 modifier = Modifier.fillMaxWidth()
             )
             PaymentInfLine(
                 lineText = R.string.PaymentDetails_Date,
-                content = appUiState.selectedHistoryPayment.date.format(formatter),
+                content = formatterDate(appUiState.selectedHistoryPayment!!.paidAt) ,
                 modifier = Modifier.fillMaxWidth()
             )
             PaymentInfLine(
-                lineText = R.string.PaymentDetails_BeneficiaryAccount,
-                content = appUiState.selectedHistoryPayment.payment.studentId,
+                lineText = R.string.PaymentDetails_StudentId,
+                content = appUiState.selectedHistoryPayment!!.studentId,
                 modifier = Modifier.fillMaxWidth()
             )
             PaymentInfLine(
                 lineText = R.string.PaymentDetails_Amount,
-                content = "${appViewModel.formatCurrency(appUiState.selectedHistoryPayment.payment.totalAmount)} VND",
+                content = "${appViewModel.formatCurrency(appUiState.selectedHistoryPayment!!.totalAmount)} VND",
                 modifier = Modifier.fillMaxWidth()
             )
-//            PaymentInfLine(
-//                lineText = R.string.PaymentDetails_Content,
-//                content = appUiState.selectedHistoryPayment.tuitionFee.content,
-//                modifier = Modifier.fillMaxWidth()
-//            )
         }
     }
 }

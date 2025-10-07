@@ -41,8 +41,10 @@ import com.example.ibanking_soa.ui.theme.LabelColor
 import com.example.ibanking_soa.ui.theme.PrimaryColor
 import com.example.ibanking_soa.ui.theme.SecondaryColor
 import com.example.ibanking_soa.ui.theme.TextColor
+import com.example.ibanking_soa.utils.formatterDate
 import com.example.ibanking_soa.viewModel.AppViewModel
 import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -93,8 +95,8 @@ fun PaymentHistory(
         ) {
             items(appUiState.paymentHistory) {
                 HistoryItem(
-                    paymentDate = it.date,
-                    amount = "${appViewModel.formatCurrency(it.payment.totalAmount)} VND",
+                    paymentDate = it.createdAt,
+                    amount = "${appViewModel.formatCurrency(it.totalAmount)} VND",
                     onTitleClick = {
                         appViewModel.onViewPaymentDetailsClick(
                             selectedPayment = it,
@@ -117,11 +119,10 @@ fun PaymentHistory(
 fun HistoryItem(
     modifier: Modifier = Modifier,
     title: String = stringResource(R.string.PaymentHistory_TuitionPayment),
-    paymentDate: LocalDateTime,
+    paymentDate: String,
     amount: String,
     onTitleClick: () -> Unit
 ) {
-    val formatter = DateTimeFormatter.ofPattern("HH:mm:ss | yyyy-MM-dd")
 
     Row(
         horizontalArrangement = Arrangement.Start,
@@ -147,7 +148,7 @@ fun HistoryItem(
             )
             Spacer(modifier = Modifier.height(5.dp))
             Text(
-                text = paymentDate.format(formatter),
+                text = formatterDate(paymentDate),
                 style = CustomTypography.labelMedium,
                 color = LabelColor
             )

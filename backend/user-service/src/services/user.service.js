@@ -7,7 +7,7 @@ const OTP_SERVICE_URL = process.env.OTP_SERVICE_URL || "http://otp-service:4004"
 const PAYMENT_SERVICE_URL = process.env.PAYMENT_SERVICE_URL || "http://payment-service:4003"
 const NOTIFICATION_SERVICE_URL = "http://notification-service:4005"
 const userService = {
-  registerUser: async ({ username, password, fullName, email }) => {
+  registerUser: async ({ username, password, fullName, email, phoneNumber }) => {
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
       throw new ApiError(400, "Email already in use", " A user with email " + email + " already exists ");
@@ -17,7 +17,8 @@ const userService = {
       username,
       password: hashedPassword,
       fullName,
-      email
+      email,
+      phoneNumber
     });
     return newUser;
   },

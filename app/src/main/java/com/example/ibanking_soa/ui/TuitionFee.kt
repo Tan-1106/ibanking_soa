@@ -248,6 +248,11 @@ fun TuitionFeeScreen(
                         style = CustomTypography.titleSmall
                     )
                     TuitionInfLine(
+                        lineText = R.string.TuitionFee_StudentID,
+                        content = appUiState.tuitionFee!!.studentId,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    TuitionInfLine(
                         lineText = R.string.TuitionFee_StudentName,
                         content = appUiState.tuitionFee!!.studentFullName,
                         modifier = Modifier.fillMaxWidth()
