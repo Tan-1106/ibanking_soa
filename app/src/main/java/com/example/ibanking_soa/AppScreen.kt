@@ -1,7 +1,7 @@
 package com.example.ibanking_soa
 
 import androidx.compose.runtime.Composable
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -22,7 +22,7 @@ enum class Screens {
 
 @Composable
 fun AppScreen(
-    appViewModel: AppViewModel = viewModel(),
+    appViewModel: AppViewModel = hiltViewModel(),
     navController: NavHostController = rememberNavController()
 ) {
     NavHost(

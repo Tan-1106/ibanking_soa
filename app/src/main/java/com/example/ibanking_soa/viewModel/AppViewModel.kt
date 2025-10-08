@@ -21,8 +21,9 @@ import com.example.ibanking_soa.data.repository.UserRepository
 import com.example.ibanking_soa.data.utils.ApiResult
 import com.example.ibanking_soa.uiState.AppUiState
 import com.example.ibanking_soa.uiState.Payment
-import com.example.ibanking_soa.uiState.PaymentHistoryItem
 import com.example.ibanking_soa.uiState.TuitionFee
+import dagger.hilt.android.lifecycle.HiltViewModel
+import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -31,13 +32,15 @@ import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import java.text.NumberFormat
 
-class AppViewModel : ViewModel() {
+@HiltViewModel
+class AppViewModel @Inject constructor(
+    private  val userRepository: UserRepository,
+    private  val tuitionRepository: TuitionRepository,
+    private  val paymentRepository: PaymentRepository,
+    private  val otpRepository: OtpRepository
+) : ViewModel() {
     private val _uiState = MutableStateFlow(AppUiState())
     val uiState: StateFlow<AppUiState> = _uiState.asStateFlow()
-    private val userRepository = UserRepository()
-    private val tuitionRepository = TuitionRepository()
-    private val paymentRepository = PaymentRepository()
-    private val otpRepository = OtpRepository()
 
     // LOGIN SCREEN
     var usernameValue by mutableStateOf("")
