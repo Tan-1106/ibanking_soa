@@ -1,9 +1,5 @@
 package com.example.ibanking_soa.uiState
 
-import com.example.ibanking_soa.data.dto.LoginResponse
-import com.example.ibanking_soa.data.dto.TuitionResponse
-import com.example.ibanking_soa.data.utils.ApiResult
-import org.w3c.dom.Attr
 import java.math.BigDecimal
 import java.time.LocalDateTime
 
