@@ -212,7 +212,7 @@ fun CustomDialog(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
-                .background(Color.White, shape = RoundedCornerShape(16.dp))
+                .background(Color.White, shape = RoundedCornerShape(10.dp))
                 .padding(8.dp)
         ) {
             Column(
@@ -238,18 +238,23 @@ fun CustomDialog(
                     horizontalArrangement = Arrangement.End,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    TextButton(onClick = onDismiss) {
+                    TextButton(
+                        onClick = onDismiss,
+                        shape = RoundedCornerShape(10.dp),
+
+                        ) {
                         Text(
                             text = stringResource(R.string.CustomDialog_CancelButton),
                             style = CustomTypography.labelMedium,
                             color = WarningColor
                         )
                     }
-                    Button(
+                    TextButton(
                         onClick = {
                             onConfirm()
                             onDismiss()
                         },
+                        shape = RoundedCornerShape(10.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = AcceptColor
                         )

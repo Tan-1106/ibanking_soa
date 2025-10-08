@@ -11,6 +11,8 @@ import androidx.core.content.edit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
+import androidx.security.crypto.EncryptedSharedPreferences
+import androidx.security.crypto.MasterKey
 import com.example.ibanking_soa.Screens
 import com.example.ibanking_soa.data.dto.ConfirmPaymentRequest
 import com.example.ibanking_soa.data.dto.LoginRequest
@@ -120,7 +122,11 @@ class AppViewModel @Inject constructor(
                         isLogging = false
                     )
                 }
-                saveCredentials(username, password, context)
+                if (isPasswordRemembered) {
+                    saveCredentials(username, password, context)
+                } else {
+                    saveCredentials("", "", context)
+                }
                 getSharedPrefs(context).edit {
                     putString("access", loginResponse.access)
                     putString("refresh", loginResponse.refresh)

@@ -85,32 +85,43 @@ fun PaymentHistory(
         },
         containerColor = BackgroundColor
     ) { innerPadding ->
-        LazyColumn (
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .padding(20.dp)
-        ) {
-            items(appUiState.paymentHistory) {
-                HistoryItem(
-                    paymentDate = it.createdAt,
-                    amount = "${appViewModel.formatCurrency(it.totalAmount)} VND",
-                    onTitleClick = {
-                        appViewModel.onViewPaymentDetailsClick(
-                            selectedPayment = it,
-                            navController = navController
-                        )
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                )
-                HorizontalDivider(
-                    thickness = 1.dp,
-                    color = LabelColor,
-                    modifier = Modifier.padding(vertical = 10.dp)
-                )
+        if(appUiState.paymentHistory.isEmpty()){
+            Row (modifier = Modifier.fillMaxSize().padding(20.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center){
+                Text(text = "No Payment History",)
             }
+        }
+        else{
+            LazyColumn(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Top,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .padding(20.dp)
+            ) {
+                items(appUiState.paymentHistory) {
+                    HistoryItem(
+                        paymentDate = it.createdAt,
+                        amount = "${appViewModel.formatCurrency(it.totalAmount)} VND",
+                        onTitleClick = {
+                            appViewModel.onViewPaymentDetailsClick(
+                                selectedPayment = it,
+                                navController = navController
+                            )
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    HorizontalDivider(
+                        thickness = 1.dp,
+                        color = LabelColor,
+                        modifier = Modifier.padding(vertical = 10.dp)
+                    )
+                }
+            }
+
+
         }
     }
 }
