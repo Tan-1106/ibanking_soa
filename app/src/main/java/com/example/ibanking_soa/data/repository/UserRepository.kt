@@ -9,16 +9,20 @@ import com.example.ibanking_soa.data.utils.safeApiCall
 import com.example.ibanking_soa.uiState.Payment
 import com.example.ibanking_soa.uiState.User
 import jakarta.inject.Inject
+import jakarta.inject.Named
 
-class UserRepository @Inject constructor(private val api: UserApi) {
+class UserRepository @Inject constructor(
+    @Named("AuthUser")private val authApi: UserApi,
+    @Named("NonAuthUser")private val nonAuthApi: UserApi,
+) {
 
     suspend fun login(loginRequest: LoginRequest): ApiResult<LoginResponse> {
-        return safeApiCall { api.login(loginRequest) }
+        return safeApiCall { nonAuthApi.login(loginRequest) }
     }
     suspend fun confirmPayment(confirmPaymentRequest: ConfirmPaymentRequest): ApiResult<Payment> {
-        return safeApiCall { api.confirmPayment(confirmPaymentRequest) }
+        return safeApiCall { authApi.confirmPayment(confirmPaymentRequest) }
     }
     suspend fun getMyInformation():ApiResult<User> {
-        return safeApiCall { api.getMe() }
+        return safeApiCall { authApi.getMe() }
     }
 }

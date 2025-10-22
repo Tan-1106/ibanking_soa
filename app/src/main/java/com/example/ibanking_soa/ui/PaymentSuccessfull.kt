@@ -47,6 +47,7 @@ import com.example.ibanking_soa.ui.theme.PrimaryColor
 import com.example.ibanking_soa.ui.theme.SecondaryColor
 import com.example.ibanking_soa.ui.theme.WarningColor
 import com.example.ibanking_soa.uiState.PaymentHistoryStatus
+import com.example.ibanking_soa.utils.formatterDate
 import com.example.ibanking_soa.viewModel.AppViewModel
 import java.time.format.DateTimeFormatter
 
@@ -146,7 +147,7 @@ fun PaymentSuccessful(
             )
             PaymentInfLine(
                 lineText = R.string.PaymentDetails_Date,
-                content = appUiState.payment.paidAt?.format(formatter)?:"",
+                content = formatterDate(appUiState.payment.paidAt) ,
                 modifier = Modifier.fillMaxWidth()
             )
             PaymentInfLine(

@@ -15,6 +15,7 @@ const notificationService = {
 
     });
     paidAt = formattedPaidAt;
+    amount = new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(amount);
     const emailContent = invoiceEmailTemplate({
       email,
       paymentId,
