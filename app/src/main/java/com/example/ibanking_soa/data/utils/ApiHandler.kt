@@ -20,11 +20,13 @@ suspend fun <T> safeApiCall(apiCall: suspend () -> Response<ApiResponse<T>>): Ap
         } else {
             response.errorBody()?.let {
                 val errorResponse = Gson().fromJson(it.string(), ErrorResponse::class.java)
-                Log.e("err", errorResponse.message)
+                var errorStr = "${errorResponse.message}: ${errorResponse.stack}, ${errorResponse.status}"
+                Log.e("err", errorStr)
                 ApiResult.Error(errorResponse.message)
             } ?: ApiResult.Error("Unknown error")
         }
     } catch (e: Exception) {
+        e.printStackTrace()
         ApiResult.Error("Unexpected error: ${e.message}")
     }
 }

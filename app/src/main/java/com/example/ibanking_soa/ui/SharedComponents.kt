@@ -251,8 +251,8 @@ fun CustomDialog(
                     }
                     TextButton(
                         onClick = {
-                            onConfirm()
                             onDismiss()
+                            onConfirm()
                         },
                         shape = RoundedCornerShape(10.dp),
                         colors = ButtonDefaults.buttonColors(

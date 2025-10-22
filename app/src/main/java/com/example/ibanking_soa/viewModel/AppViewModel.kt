@@ -108,10 +108,12 @@ class AppViewModel @Inject constructor(
             try {
                 val apiResult = userRepository.login(loginRequest)
                 if (apiResult is ApiResult.Error) {
+
                     _uiState.update {
                         it.copy(isLogging = false)
                     }
                     errorMessage = apiResult.message
+                    Log.e("err",errorMessage)
                     return@launch
                 }
                 val loginResponse = (apiResult as ApiResult.Success).data
@@ -138,6 +140,7 @@ class AppViewModel @Inject constructor(
                     popUpTo(Screens.Login.name) { inclusive = true }
                 }
             } catch (e: Exception) {
+                e.printStackTrace()
                 errorMessage = e.message ?: ""
             }
         }

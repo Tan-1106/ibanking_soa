@@ -1,6 +1,5 @@
 package com.example.ibanking_soa.ui
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -44,6 +43,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -51,9 +51,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -70,7 +73,6 @@ import com.example.ibanking_soa.ui.theme.SecondaryColor
 import com.example.ibanking_soa.ui.theme.TextColor
 import com.example.ibanking_soa.ui.theme.WarningColor
 import com.example.ibanking_soa.viewModel.AppViewModel
-import java.math.BigDecimal
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -82,7 +84,7 @@ fun PaymentDetails(
     val appUiState by appViewModel.uiState.collectAsState()
     val payment = appUiState.payment
     var isChecked by remember { mutableStateOf(false) }
-
+    var isShowDialog by rememberSaveable { mutableStateOf(false) }
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -141,9 +143,22 @@ fun PaymentDetails(
 
                         }
                         Text(
-                            text = "Agree to terms and conditions",
+                            text = buildAnnotatedString {
+                                append("Agree to ")
+                                withStyle(
+                                    style = SpanStyle(
+                                        color = PrimaryColor,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                ) {
+                                    append("terms and conditions")
+                                }
+                            },
                             style = CustomTypography.bodyMedium,
-                            color = TextColor
+                            color = TextColor,
+                            modifier = Modifier.clickable {
+                                isShowDialog = true
+                            }
                         )
                     }
                     Spacer(modifier = Modifier.height(10.dp))
@@ -203,6 +218,67 @@ fun PaymentDetails(
                 .padding(20.dp)
                 .padding(innerPadding)
         ) {
+            if (isShowDialog) {
+                CustomDialog(
+                    onDismiss = {
+                        isChecked = false
+                        isShowDialog = false
+                    },
+                    onConfirm = {
+                        isChecked = true
+                        isShowDialog = false
+                    },
+                    confirmText = "Agree",
+                    title = "Terms and Conditions",
+                    content = {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(20.dp),
+                            verticalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = "Term 1",
+                                    style = CustomTypography.titleMedium
+
+                                )
+                            }
+                            Row(
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Text(
+                                    text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Viverra condimentum eget purus in. Consectetur eget id morbi amet amet, in. Ipsum viverra pretium tellus neque. Ullamcorper suspendisse aenean leo pharetra in sit semper et. Amet quam placerat sem.",
+                                    style = CustomTypography.bodyMedium
+                                )
+                            }
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = "Term 2",
+                                    style = CustomTypography.titleMedium
+
+                                )
+                            }
+                            Row(
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Text(
+                                    text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Viverra condimentum eget purus in. Consectetur eget id morbi amet amet, in. Ipsum viverra pretium tellus neque. Ullamcorper suspendisse aenean leo pharetra in sit semper et. Amet quam placerat sem.",
+                                    style = CustomTypography.bodyMedium
+                                )
+                            }
+                        }
+                    },
+                )
+
+            }
+
             Surface(
                 shape = RoundedCornerShape(20.dp),
                 shadowElevation = 4.dp,
@@ -413,4 +489,5 @@ fun PaymentDetailsScreenPreview() {
         appViewModel = fakeAppViewModel,
         navController = fakeNavController
     )
+
 }
